@@ -51,7 +51,7 @@ export class NotificationsService {
           // @ts-ignore
           boxExposure: box.exposure,
           // @ts-ignore
-          sensorName: box.sensors.find(sensor => sensor._id = notificationRule.sensor).title,
+          sensorName: box.sensors.find(sensor => sensor._id = notificationRule.sensor),
           // @ts-ignore
           boxDate: box.updatedAt,
         }
@@ -87,5 +87,35 @@ export class NotificationsService {
         resolve(res)
       });
     })
+  }
+
+  updateNotificationRule(params) {
+    let headers = new HttpHeaders();
+    headers = headers.append('Authorization', 'Bearer '+window.localStorage.getItem('sb_accesstoken'));
+    this.http.put(`${environment.api_url}/notification/notificationRule/`+params.notificationRuleId, params, {headers: headers}).subscribe((res:any) => {
+      //@ts-ignore
+      let currentRules = this.notificationsStore.store._value.state.notificationRules;
+      let indexOfChanged = currentRules.findIndex(x => x._id === res.data._id);
+      if (indexOfChanged >= 0) currentRules[indexOfChanged] = res.data;
+      this.notificationsStore.update(state => ({
+        ...state,
+        notificationRules: currentRules
+      }));
+    });
+  }
+
+  deleteNotificationRule(notificationRuleId) {
+    let headers = new HttpHeaders();
+    headers = headers.append('Authorization', 'Bearer '+window.localStorage.getItem('sb_accesstoken'));
+    this.http.delete(`${environment.api_url}/notification/notificationRule/`+notificationRuleId, {headers: headers}).subscribe((res:any) => {
+      //@ts-ignore
+      let currentRules = this.notificationsStore.store._value.state.notificationRules;
+      let indexOfDeleted = currentRules.findIndex(x => x._id === res.data._id);
+      if (indexOfDeleted >= 0) currentRules.splice(indexOfDeleted, 1);;
+      this.notificationsStore.update(state => ({
+        ...state,
+        notificationRules: currentRules
+      }));
+    });
   }
 }
