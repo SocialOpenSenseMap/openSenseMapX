@@ -1,6 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { NotificationsQuery } from 'src/app/models/notifications/state/notifications.query';
 import { NotificationsService } from 'src/app/models/notifications/state/notifications.service';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
     selector: 'osem-profile-followed-boxes',
@@ -13,11 +14,12 @@ export class ProfileFollowedBoxesComponent implements OnInit {
   @Input() notificationRules;
   @Input () user;
 
-  constructor(private notificationsQuery: NotificationsQuery, private notificationsService: NotificationsService) { }
+  constructor(private notificationsQuery: NotificationsQuery, private notificationsService: NotificationsService, public router: Router) { }
   dataSource: any [] = [];
   editField: string;
   idRule: string;
   confirm=false;
+  create=false;
 
   //Function for button to edit notification rule
 
@@ -64,7 +66,14 @@ export class ProfileFollowedBoxesComponent implements OnInit {
     this.reload();
   }
 
+  //Functions for adding
+  addRule() { 
+    this.create=true;
+  }
 
+  boxFollow(id:string){
+    this.router.navigateByUrl('/(modal:follow-box)?boxId='+id)
+  }
 
 
   ngOnChanges(changes) {
