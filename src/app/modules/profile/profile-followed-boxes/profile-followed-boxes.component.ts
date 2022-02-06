@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, AfterViewInit, OnChanges } from '@angular/core';
 import { NotificationsQuery } from 'src/app/models/notifications/state/notifications.query';
 import { NotificationsService } from 'src/app/models/notifications/state/notifications.service';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -27,8 +27,16 @@ export class ProfileFollowedBoxesComponent implements OnInit {
     let e = (document.getElementById('sel-operators'+i)) as HTMLSelectElement;
     let operators = e.options[e.selectedIndex].text;
     let thresholds = document.getElementById('form-thresholds'+i);
-    let f = document.getElementById("check-email"); //TODO: Getting notification by email option
-    console.log(thresholds);
+    let f = document.getElementById('check-email'+i); //TODO: Getting notification by email option
+    let notificationChannels = [];
+    // @ts-ignore
+    if(f.checked) {
+      notificationChannels.push({
+          "channel": "email", 
+          "email": this.user.email
+      })
+    }
+    console.log(notificationChannels)
     this.notificationsService.updateNotificationRule({
       notificationRuleId:id,
       sensors:boxSensors,
@@ -40,9 +48,9 @@ export class ProfileFollowedBoxesComponent implements OnInit {
       activationTrigger:boxActivationTrigger,
       active:boxActive,
       user:boxUser,
-      notificationChannel:boxNotCha,
+      notificationChannel:notificationChannels,
     })
-    this.reload();
+        
   }
   
   reload(){
@@ -75,10 +83,9 @@ export class ProfileFollowedBoxesComponent implements OnInit {
     this.router.navigateByUrl('/(modal:follow-box)?boxId='+id)
   }
 
-
   ngOnChanges(changes) {
     if(changes.notificationRules && typeof changes.notificationRules.currentValue != "undefined") {
-        this.dataSource = changes.notificationRules.currentValue;
+      this.dataSource = changes.notificationRules.currentValue;
     }
   }
 
@@ -90,9 +97,10 @@ export class ProfileFollowedBoxesComponent implements OnInit {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 
-  ngAfterViewInit(): void {
-    // afterViewInit code.
-    this.init();
+  ngAfterViewInit(changes): void {
+    if(changes.notificationRules && typeof changes.notificationRules.currentValue != "undefined") {
+      this.dataSource = changes.notificationRules.currentValue;
+  }
   }
 
   init(): void {

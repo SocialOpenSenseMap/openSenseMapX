@@ -6,7 +6,7 @@
   <body>
 <div class="card">
   <div class="card-body">
-    <div id="table" class="table-editable">
+    <div id="table is-narrow is-hoverable" class="table-editable">
       <table id="table-rules" class="table">
         <thead>
         <tr>
@@ -33,24 +33,36 @@
             <span contenteditable="false" >{{box.boxExposure}}</span>
           </td>
           <td>
-            <span contenteditable="true">
-                  <select class="input is-small osem-border-radius" id="{{ 'sel-operators' + i }}" name="sellist1">
-                      <option selected>{{box.activationOperator}}</option>
-                      <option disabled class="separator"></option>
-                      <option value=1>under</option>
-                      <option value=2>equal</option>
-                      <option value=3>over</option>
-                      <option value=4>unusual</option>
-                  </select>
-              </span>
+            <div class="control">
+              <div class="select">
+                <select class="input is-small osem-border-radius" id="{{ 'sel-operators' + i }}" name="sellist1" (change)="selected(i)">
+                  <option selected>{{box.activationOperator}}</option>
+                  <option disabled class="separator"></option>
+                  <option value=1>under</option>
+                  <option value=2>equal</option>
+                  <option value=3>over</option>
+                  <option value=4>unusual</option>
+                </select>
+              </div>
+            </div>
           </td>
           <td>
-            <span contenteditable="true">
-              <input class="input is-small osem-border-radius" type="number" size="4" [value]= "box.activationThreshold" id="{{ 'form-thresholds' + i }}">
+            <span *ngIf= "box.activationOperator!='unusual' ; else elseValue" contenteditable="true">
+              <input class="input is-small osem-border-radius" type="number" [value]= "box.activationThreshold" id="{{ 'form-thresholds' + i }}">
             </span>
+            <ng-template #elseValue>
+              <span contenteditable="true">
+                <input class="input is-small osem-border-radius" type="number" min=0 max=100 [value]= "box.activationThreshold" id="{{ 'form-thresholds' + i }}">
+              </span>
+          </ng-template>
           </td>
           <td>
+            <span *ngIf= "box.notificationChannel!=''; else elseEmail" contenteditable="true">
               <input class="form-check-input" type="checkbox" id="{{ 'check-email' + i }}" name="option1" value="something" checked>
+            </span>
+            <ng-template #elseEmail>
+              <input class="form-check-input" type="checkbox" id="{{ 'check-email' + i }}" name="option1" value="something">
+            </ng-template>
           </td>
           <td>
               <span class="osem-clickable-icon" (click)="updateValue(i,box._id, box.sensors, box.box, box.name, box.activationTrigger, box.active, box.user, box.notificationChannel, $event)">

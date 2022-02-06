@@ -21,7 +21,7 @@ const routes: Routes = [
       {path: 'general', component: ProfileBoxCreateGeneralContainerComponent},
       {path: 'sensors', component: ProfileBoxCreateSensorsContainerComponent},
     ]},
-    {path: 'fbox', component: ProfileFollowedBoxesContainerComponent},
+    {path: 'fbox', component: ProfileFollowedBoxesContainerComponent, data: {name: 'Followed Boxes'}},
     {path: '', component: ProfileNavContainerComponent},
     {path: 'vis', component: ProfileVisContainerComponent, data: {name: 'Visulizations'}},
   ]},
