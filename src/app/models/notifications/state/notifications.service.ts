@@ -43,6 +43,19 @@ export class NotificationsService {
             // @ts-ignore
             sensors.push(box.sensors.find(sensor => sensor._id == notificationRule.sensors[i]))
           }
+          notificationRules[i] = {
+            ...notificationRule,
+            boxWhole:box,
+            // @ts-ignore // TODO: redundant
+            boxName: box.name,
+            // @ts-ignore
+            boxExposure: box.exposure,
+            // @ts-ignore //TODO: a notificationRule could theoretically have more than one sensor, but Im not sure if we care about that...
+            sensorName: sensors[0].title,
+            sensorWhole: sensors[0],
+            // @ts-ignore
+            boxDate: box.updatedAt,
+          }
           for (let j = 0; j < notificationRule.notifications.length; j++) {
             let notification = notificationRule.notifications[j];
             notification = {
@@ -57,19 +70,6 @@ export class NotificationsService {
               sensors: sensors
             }
             notifications.push(notification)
-          }
-          notificationRules[i] = {
-            ...notificationRule,
-            boxWhole:box,
-            // @ts-ignore // TODO: redundant
-            boxName: box.name,
-            // @ts-ignore
-            boxExposure: box.exposure,
-            // @ts-ignore //TODO: a notificationRule could theoretically have more than one sensor, but Im not sure if we care about that...
-            sensorName: sensors[0].title,
-            sensorWhole: sensors[0],
-            // @ts-ignore
-            boxDate: box.updatedAt,
           }
         } catch(e) {
           console.error(e);
@@ -99,15 +99,42 @@ export class NotificationsService {
               notification = {
                 ...notification,
                 timeText: moment(notification.notificationTime).format("DD.MM.YYYY, HH:mm"),
-                type: "threshold",
+                type: "connector",
                 connectionOperator: notificationConnector.connectionOperator,
                 ruleName: notificationConnector.name,
                 boxA: ruleA.boxWhole,
                 sensorsA: [ruleA.sensorWhole],
+                activationOperatorA: ruleA.activationOperator,
+                activationThresholdA: ruleA.activationThreshold,
                 boxB: ruleB.boxWhole,
-                sensorsB: [ruleB.sensorWhole]
+                sensorsB: [ruleB.sensorWhole],
+                activationOperatorB: ruleB.activationOperator,
+                activationThresholdB: ruleB.activationThreshold
               }
               notifications.push(notification)
+            }
+            res.data[i] = {
+              ...res.data,
+              boxWholeA: ruleA.boxWhole,
+              // @ts-ignore // TODO: redundant
+              boxNameA: ruleA.boxWhole.name,
+              // @ts-ignore
+              boxExposureA: ruleA.boxWhole.exposure,
+              // @ts-ignore //TODO: a notificationRule could theoretically have more than one sensor, but Im not sure if we care about that...
+              sensorNameA: ruleA.sensorWhole.title,
+              sensorWholeA: ruleA.sensorWhole,
+              // @ts-ignore
+              boxDateA: ruleA.boxWhole.updatedAt,
+              boxWholeB: ruleB.boxWhole,
+              // @ts-ignore // TODO: redundant
+              boxNameB: ruleB.boxWhole.name,
+              // @ts-ignore
+              boxExposureB: ruleB.boxWhole.exposure,
+              // @ts-ignore //TODO: a notificationRule could theoretically have more than one sensor, but Im not sure if we care about that...
+              sensorNameB: ruleB.sensorWhole.title,
+              sensorWholeB: ruleB.sensorWhole,
+              // @ts-ignore
+              boxDateB: ruleB.boxWhole.updatedAt,
             }
           } catch(e) {
             console.error(e);
@@ -115,10 +142,12 @@ export class NotificationsService {
             i--;
           }
         }
+        // @ts-ignore
+        notifications = notifications.concat(this.notificationsStore.store._value.state.notifications)
         notifications.sort((a,b) => b.notificationTime.localeCompare(a.notificationTime));
         this.notificationsStore.update(state => ({
           ...state,
-          notifications: notifications.concat(state.notifications),
+          notifications: notifications,
           notificationConnectors: res.data,
           areNotificationsLoaded: true
         }));
