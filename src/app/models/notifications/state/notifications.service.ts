@@ -114,7 +114,7 @@ export class NotificationsService {
               notifications.push(notification)
             }
             res.data[i] = {
-              ...res.data,
+              ...res.data[i],
               boxWholeA: ruleA.boxWhole,
               // @ts-ignore // TODO: redundant
               boxNameA: ruleA.boxWhole.name,
@@ -276,30 +276,67 @@ export class NotificationsService {
       }
       this.websocket.onmessage = async (evt) => {
         const message = JSON.parse(evt.data)
-        let box = await this.getBox(message.rule.box, headers);
-        let sensors = [];
-          for ( let i = 0; i < message.rule.sensors.length; i++) {
+        if (!message.resultA) {
+          let box = await this.getBox(message.rule.box, headers);
+          let sensors = [];
+            for ( let i = 0; i < message.rule.sensors.length; i++) {
+              // @ts-ignore
+              sensors.push(box.sensors.find(sensor => sensor._id == message.rule.sensors[i]))
+            }
+          let notification = {
+            notificationRule: message.rule._id,
+            notificationValue: message.measurement.value,
+            notificationTime: message.createdAt,
+            timeText: moment(message.createdAt).format("DD.MM.YYYY, HH:mm"),
+            type: "threshold",
+            activationOperator: message.rule.activationOperator,
+            activationThreshold: message.rule.activationThreshold,
+            ruleName: message.rule.name,
+            box: box,
             // @ts-ignore
-            sensors.push(box.sensors.find(sensor => sensor._id == message.rule.sensors[i]))
+            sensors: sensors
           }
-        let notification = {
-          notificationRule: message.rule._id,
-          notificationValue: message.measurement.value,
-          notificationTime: message.createdAt,
-          timeText: moment(message.createdAt).format("DD.MM.YYYY, HH:mm"),
-          type: "threshold",
-          activationOperator: message.rule.activationOperator,
-          activationThreshold: message.rule.activationThreshold,
-          ruleName: message.rule.name,
-          box: box,
-          // @ts-ignore
-          sensors: sensors
+          this.notificationsStore.update(state => ({
+            ...state,
+            unread: true,
+            notifications: (typeof state.notifications != "undefined") ? [notification].concat(state.notifications) : [notification]
+          }));
+        } else {
+          let boxA = await this.getBox(message.resultA.rule.box, headers);
+          let sensorsA = [];
+          for ( let i = 0; i < message.resultA.rule.sensors.length; i++) {
+            // @ts-ignore
+            sensorsA.push(boxA.sensors.find(sensor => sensor._id == message.resultA.rule.sensors[i]))
+          }
+          let boxB = await this.getBox(message.resultB.rule.box, headers);
+          let sensorsB = [];
+          for ( let i = 0; i < message.resultB.rule.sensors.length; i++) {
+            // @ts-ignore
+            sensorsB.push(boxA.sensors.find(sensor => sensor._id == message.resultB.rule.sensors[i]))
+          }
+          let notification = {
+            notificationRule: message.connectorID,
+            notificationValueA: message.resultA.measurement.value,
+            notificationValueB: message.resultB.measurement.value,
+            notificationTime: message.createdAt,
+            timeText: moment(message.createdAt).format("DD.MM.YYYY, HH:mm"),
+            type: "connector",
+            connectionOperator: message.connectionOperator,
+            boxA: boxA,
+            sensorsA: sensorsA,
+            activationOperatorA: message.resultA.rule.activationOperator,
+            activationThresholdA: message.resultA.rule.activationThreshold,
+            boxB: boxB,
+            sensorsB: sensorsB,
+            activationOperatorB: message.resultB.rule.activationOperator,
+            activationThresholdB: message.resultB.rule.activationThreshold
+          }
+          this.notificationsStore.update(state => ({
+            ...state,
+            unread: true,
+            notifications: (typeof state.notifications != "undefined") ? [notification].concat(state.notifications) : [notification]
+          }));
         }
-        this.notificationsStore.update(state => ({
-          ...state,
-          unread: true,
-          notifications: (typeof state.notifications != "undefined") ? [notification].concat(state.notifications) : [notification]
-        }));
       }
       this.websocket.onerror = (evt) => console.error('onerror', evt)
       this.websocket.onclose = (evt) => setTimeout(
