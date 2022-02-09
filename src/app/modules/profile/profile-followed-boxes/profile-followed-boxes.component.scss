@@ -1,9 +1,14 @@
 @import '../../../../styles/variables.scss';
 
 html, body {
-	height: 500px !important;
+	height: auto;
 	
 }
+
+tr:hover {
+    background-color: #4eaf4746;
+}
+
 .table-edit{
 	border-radius: 3px;
 	border: none;
@@ -20,6 +25,7 @@ html, body {
 .text-center{
 	background-color:#4EAF47 ;
 	color: white;
+    text-align:center;
 }
 
 .form-select {
@@ -48,25 +54,3 @@ html, body {
         opacity: 1;
     }
 }
-
-/**.osem-button-pf {
-    border-radius: 3px;
-    background: var(white);
-    border: none;
-    box-shadow: none;
-    padding: 0.4em 0.7em;
-    color: var(white);
-    cursor: pointer;
-    outline: none;
-
-    &:hover {
-        color: var(--text-color-secondary);
-    }
-
-    &:disabled {
-        background: var(--disabled-color);
-        cursor: not-allowed;
-    }
-
-    
-}**/

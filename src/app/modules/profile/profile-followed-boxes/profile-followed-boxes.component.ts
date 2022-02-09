@@ -1,67 +1,143 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { ChangeDetectionStrategy,Component, OnInit, Input,ChangeDetectorRef, AfterViewInit, OnChanges } from '@angular/core';
 import { NotificationsQuery } from 'src/app/models/notifications/state/notifications.query';
 import { NotificationsService } from 'src/app/models/notifications/state/notifications.service';
-  
+import { ActivatedRoute, Router } from '@angular/router';
+import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
+
 @Component({
-    selector: 'osem-profile-followed-boxes',
-    templateUrl: './profile-followed-boxes.component.html',
-    styleUrls: ['./profile-followed-boxes.component.scss'],
+  selector: 'osem-profile-followed-boxes',
+  templateUrl: './profile-followed-boxes.component.html',
+  styleUrls: ['./profile-followed-boxes.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 
 export class ProfileFollowedBoxesComponent implements OnInit {
     
-    @Input() notificationRules;
-    @Input () user;
+  @Input() notificationRules;
+  @Input () user;
+  @Input() box;
 
-    constructor(private notificationsQuery: NotificationsQuery, private notificationsService: NotificationsService) { }
-    dataSource: any [] = [];
-    editField: string;
+  constructor(
+    private notificationsQuery: NotificationsQuery, 
+    private notificationsService: NotificationsService, 
+    public router: Router,
+    private changeDetector: ChangeDetectorRef,
+    private http: HttpClient) { }
+
+  dataSource: any [] = [];
+  editField: string;
+  idRule: string;
+  confirm=false;
+  create=false;
+  edition: any [] = [];
+  unit;
+
+  //Function for button to edit notification rule
+  editableRule(index:number){
+    for(let i=0; i <=this.dataSource.length; i++){
+      if (i=index){this.edition.push  (true)}
+      else{this.edition.push(false)}
+    }
+  }
+
+  async updateValue(i:number, id:string, boxSensors: any, boxBox:string , boxName: string, boxActivationTrigger:string, boxActive: boolean, boxUser: string , boxNotCha:any, event: any) {
     
-    updateValue(i:number, id:string, boxSensors: any, boxBox:string , boxName: string, boxActivationTrigger:string, boxActive: boolean, boxUser: string , boxNotCha:any, event: any) {
-      let e = (document.getElementById('sel-operators'+i)) as HTMLSelectElement;
-      let operators = e.options[e.selectedIndex].text;
-      let thresholds = document.getElementById('form-thresholds'+i);
-      let f = document.getElementById("check-email"); //TODO: Getting notification by email option
-      console.log(thresholds);
-      this.notificationsService.updateNotificationRule({
-        notificationRuleId:id,
-        sensors:boxSensors,
-        box:boxBox,
-        name:boxName,
-        // @ts-ignore
-        activationThreshold: thresholds.value,
-        activationOperator: operators,
-        activationTrigger:boxActivationTrigger,
-        active:boxActive,
-        user:boxUser,
-        notificationChannel:boxNotCha,
+    let e = (document.getElementById('sel-operators'+i)) as HTMLSelectElement;
+    let operators = e.options[e.selectedIndex].text;
+    let thresholds = document.getElementById('form-thresholds'+i);
+    let f = document.getElementById('check-email'+i); //TODO: Getting notification by email option
+    let notificationChannels = [];
+    // @ts-ignore
+    if(f.checked) {
+      notificationChannels.push({
+          "channel": "email", 
+          "email": this.user.email
       })
     }
-    
-    remove(i:number, id:string) {
-      this.notificationsService.deleteNotificationRule(id);
-    }
+    this.notificationsService.updateNotificationRule({
+      notificationRuleId:id,
+      sensors:boxSensors,
+      box:boxBox,
+      name:boxName,
+      // @ts-ignore
+      activationThreshold: thresholds.value,
+      activationOperator: operators,
+      activationTrigger:boxActivationTrigger,
+      active:boxActive,
+      user:boxUser,
+      notificationChannel:notificationChannels,
+    })
+    this.sleep(500);
+    this.changeDetector.detectChanges();
+  }
+  
+  reload(){
+  window.location.reload();
+  }
 
-    ngOnChanges(changes) {
-        if(changes.notificationRules && typeof changes.notificationRules.currentValue != "undefined") {
-            this.dataSource = changes.notificationRules.currentValue;
-        }
-    }
-
-    ngOnInit(): void {
-        
-    }
-
-    sleep(ms) {
-        return new Promise(resolve => setTimeout(resolve, ms));
+  async getUnit(data){
+    //let e = (document.getElementById('sensor'+i)) as HTMLSelectElement;
+    //let sensorIndex = sensor.value;
+    let headers = new HttpHeaders();
+    headers = headers.append('Authorization', 'Bearer '+window.localStorage.getItem('sb_accesstoken'));
+    // @ts-ignore
+    let boxBox=this.data.box;
+    this.box = await this.notificationsService.getBox(boxBox, headers);
+    //console.log(this.box.sensors[0].unit);
+    for(let i = 0; i < this.box.sensors.length; i++) {
+      // @ts-ignore
+      if (data.sensorName == this.box.sensors[i].title){
+        return this.unit = this.box.sensors[i].unit;
+      }else{
+        return "no unit"
       }
-
-    ngAfterViewInit(): void {
-        // afterViewInit code.
-        this.init();
     }
+  }
 
-    init(): void {
-        // init code.
+  //Functions for deletetion of notification rule
+
+  selectItem(id:string) {
+    this.confirm = true;
+    this.idRule=id;
+  }
+
+  cancel() { 
+    this.confirm=false;
+  }
+
+  remove(id:string) {
+    this.notificationsService.deleteNotificationRule(id);
+    this.confirm=false;
+    this.reload();
+  }
+
+  //Functions for adding
+  addRule() { 
+    this.create=true;
+  }
+
+  boxFollow(id:string){
+    this.router.navigateByUrl('/(modal:follow-box)?boxId='+id)
+  }
+
+
+  async ngOnChanges(changes) {
+    if(changes.notificationRules && typeof changes.notificationRules.currentValue != "undefined") {
+      this.dataSource = changes.notificationRules.currentValue;
+      this.unit = this.getUnit(this.dataSource);
     }
+    // @ts-ignore
+  }
+
+  async ngOnInit(){
+    await this.sleep(5000);
+  }
+
+  sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+  init(): void {
+    // init code.
+  }
 }

@@ -1,6 +1,5 @@
 import { Injectable, EventEmitter, ChangeDetectorRef } from '@angular/core';
 import { ID } from '@datorama/akita';
-import * as moment from 'moment';
 import { NotificationsStore } from './notifications.store';
 import { NotificationsQuery } from './notifications.query';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
