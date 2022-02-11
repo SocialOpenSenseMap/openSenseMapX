@@ -45,7 +45,7 @@ export class NotificationsService {
             }
             notification = {
               ...notification,
-              timeText: moment(notification.notificationTime).format("DD.MM.YYYY, HH:mm"),
+              //timeText: moment(notification.notificationTime).format("DD.MM.YYYY, HH:mm"),
               type: "threshold",
               activationOperator: notificationRule.activationOperator,
               activationThreshold: notificationRule.activationThreshold,

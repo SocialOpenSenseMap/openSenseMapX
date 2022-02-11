@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy,Component, OnInit, Input,ChangeDetectorRef, AfterViewInit, OnChanges } from '@angular/core';
+import { ChangeDetectionStrategy,Component, OnInit, Input,ChangeDetectorRef, AfterViewInit, OnChanges , Pipe, PipeTransform } from '@angular/core';
 import { NotificationsQuery } from 'src/app/models/notifications/state/notifications.query';
 import { NotificationsService } from 'src/app/models/notifications/state/notifications.service';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -29,8 +29,12 @@ export class ProfileFollowedBoxesComponent implements OnInit {
   idRule: string;
   confirm=false;
   create=false;
+  connectRule=false;
   edition: any [] = [];
   unit;
+  order: string = 'boxName';
+  public searchText : string;
+  public customerData : any;
 
   //Function for button to edit notification rule
   editableRule(index:number){
@@ -40,19 +44,25 @@ export class ProfileFollowedBoxesComponent implements OnInit {
     }
   }
 
-  async updateValue(i:number, id:string, boxSensors: any, boxBox:string , boxName: string, boxActivationTrigger:string, boxActive: boolean, boxUser: string , boxNotCha:any, event: any) {
+  async updateValue(i:number, id:string, boxSensors: any, boxBox:string , boxName: string, boxActivationTrigger:string, boxActive: boolean, boxUser: string , event: any) {
     
     let e = (document.getElementById('sel-operators'+i)) as HTMLSelectElement;
     let operators = e.options[e.selectedIndex].text;
     let thresholds = document.getElementById('form-thresholds'+i);
-    let f = document.getElementById('check-email'+i); //TODO: Getting notification by email option
+    let f = document.getElementById('check-email'+i)
+    let g = document.getElementById('check-active'+i);
     let notificationChannels = [];
     // @ts-ignore
-    if(f.checked) {
+    if(document.getElementById('check-email'+i).checked) {
       notificationChannels.push({
           "channel": "email", 
           "email": this.user.email
       })
+    }
+    boxActive=false;
+    // @ts-ignore
+    if(document.getElementById('check-active'+i).checked){
+      boxActive=true;
     }
     this.notificationsService.updateNotificationRule({
       notificationRuleId:id,
@@ -94,15 +104,46 @@ export class ProfileFollowedBoxesComponent implements OnInit {
     }
   }
 
+  //Functions for filtering
+  filterByName(){
+    // Declare variables
+    var input, filter, table, tr, td, i, txtValue;
+    input = document.getElementById("myInput");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("table-rules");
+    tr = table.getElementsByTagName("tr");
+
+    // Loop through all table rows, and hide those who don't match the search query
+    for (i = 0; i < tr.length; i++) {
+      td = tr[i].getElementsByTagName("td")[0];
+      if (td) {
+        txtValue = td.textContent || td.innerText;
+        if (txtValue.toUpperCase().indexOf(filter) > -1) {
+          tr[i].style.display = "";
+        } else {
+          tr[i].style.display = "none";
+        }
+      }
+    }
+  }
+
   //Functions for deletetion of notification rule
 
-  selectItem(id:string) {
+  deleteItem(id:string) {
     this.confirm = true;
+    this.idRule=id;
+  }
+
+  //Connect rule
+
+  connectItem(id:string) {
+    this.connectRule = true;
     this.idRule=id;
   }
 
   cancel() { 
     this.confirm=false;
+    this.connectRule = false;
   }
 
   remove(id:string) {
