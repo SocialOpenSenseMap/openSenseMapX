@@ -399,7 +399,6 @@ export class NotificationsService {
     headers = headers.append('Authorization', 'Bearer '+window.localStorage.getItem('sb_accesstoken'));
 
     let connectws = () => {
-      // TODO: The url of the websocket should go into the configuration file
       this.websocket = new WebSocket(environment.websocket_url)
       this.websocket.onopen = (evt) => {
 
