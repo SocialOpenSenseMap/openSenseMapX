@@ -37,8 +37,6 @@ export class BoxFollowComponent implements OnInit {
 
   async ngOnInit() {
     this.notificationsService.messageToUser = "message appers here";
-    await this.sleep(5000);
-    console.log(this.notificationRules);
   }
 
   async ngOnChanges(changes) {
