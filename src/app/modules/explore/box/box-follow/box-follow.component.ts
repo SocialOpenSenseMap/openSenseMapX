@@ -53,15 +53,14 @@ export class BoxFollowComponent implements OnInit {
 
   async sendNotification() {
     // get input elements of the form
-    let sensors = document.getElementById("form-sensors");
-    let operators = document.getElementById("form-operators");
-    let thresholds = document.getElementById("form-thresholds");
-    let email = document.getElementById("form-email");
-    // check if the input elements have been found
-    // TODO: check if input elements have values!
-    if (sensors && operators && thresholds && email) {
+    let sensors = (<HTMLSelectElement>document.getElementById("form-sensors"));
+    let operators = (<HTMLSelectElement>document.getElementById("form-operators"));
+    let thresholds = (<HTMLInputElement>document.getElementById("form-thresholds"));
+    let email = (<HTMLInputElement>document.getElementById("form-email"));
+    // check if the input elements have been found and if they have values
+    if (sensors && operators && thresholds && email
+      && sensors.value != "" && operators.value != "" && thresholds.value != "" && email.value != "") {
       let notificationChannels = [];
-      // @ts-ignore
       if(email.checked) {
         notificationChannels.push({
             "channel": "email", 
@@ -70,27 +69,18 @@ export class BoxFollowComponent implements OnInit {
       }
       // create a notification rule
       this.notificationsService.createNotificationRule({
-        // @ts-ignore
         sensors: [sensors.value],
         box: this.activeBox._id,
         name: "aRule",
-        // @ts-ignore
         activationThreshold: thresholds.value,
-        // @ts-ignore
         activationOperator: operators.value,
         activationTrigger: "any",
         active: true,
         notificationChannel: notificationChannels
-        // @ts-ignore
       }, this.activeBox.name, sensors.options[sensors.selectedIndex].text)
-      // .catch(err => {
-      //   this.messageToUser = err
-      //   console.log(this.messageToUser)
-      // })
     }
     this.sleep(500);
     this.changeDetector.detectChanges();
-    // TODO: what happens after a notification rule has bee created? Will the form close? Do you get some message that it worked?
   }
 
   selected(){
