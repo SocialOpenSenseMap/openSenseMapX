@@ -1,4 +1,4 @@
-import { Injectable, EventEmitter, ChangeDetectorRef } from '@angular/core';
+import { Injectable, EventEmitter, ChangeDetectorRef, Input } from '@angular/core';
 import { ID } from '@datorama/akita';
 import { NotificationsStore } from './notifications.store';
 import { NotificationsQuery } from './notifications.query';
@@ -15,6 +15,7 @@ export class NotificationsService {
 
   public postError: EventEmitter<HttpErrorResponse> = new EventEmitter<HttpErrorResponse>();
   public messageToUser: string;
+  public messageAppears: boolean = false;
   
   websocket;
 
@@ -162,10 +163,10 @@ export class NotificationsService {
     this.http.post(`${environment.api_url}/notification/notificationRule`, params, {headers: headers})
       .pipe(catchError(err => {
         this.messageToUser = "Rule already exists.";
+        this.messageAppears = true;
         throw 'An error occurred: ' + err;
       }))
       .subscribe(async (res:any) => {
-      this.messageToUser = "ok"; 
       var d = new Date();
       // give a notification that a rule was created
       let newNotification = {
@@ -221,10 +222,10 @@ export class NotificationsService {
     this.http.post(`${environment.api_url}/notification/notificationRule/connect`, params, {headers: headers})
     .pipe(catchError(err => {
       this.messageToUser = "Rule already exists.";
+      this.messageAppears = true;
       throw 'An error occurred: ' + err;
     }))
-    .subscribe(async (res:any) => {
-      this.messageToUser = "ok"; 
+    .subscribe(async (res:any) => { 
       var d = new Date();
       // give a notification that a rule was created
       let newNotification = {

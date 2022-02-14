@@ -8,8 +8,26 @@
   cursor: pointer;
   outline: none;
   display: block;
-  width: 100%;
+  width: 50%;
   margin: 20px 0px;
+  display:inline-block;
+  position: relative;
+  left: 5px;
+}
+
+.osem-button2 {
+  border-radius: 3px;
+  background: lightgray;
+  border: none;
+  box-shadow: none;
+  padding: 0.4em 0.7em;
+  color: #2F4F4F;
+  cursor: pointer;
+  outline: none;
+  display: block;
+  width: 49%;
+  margin: 20px 0px;
+  display:inline-block;
 }
 
 ::placeholder {
@@ -24,4 +42,25 @@ option[value=""][disabled] {
 }
 option {
   color: black;
+}
+
+.error {
+  margin: 2px 0px;
+  padding: 7px;
+  border-radius:.5em;
+  border: 1px solid;
+  color: #D8000C;
+  background-color: #FFD2D2;
+  font-size: small;
+  font-weight: bold;
+}
+
+.notification {
+  margin: 5px 0px;
+  padding: 10px;
+  border: 1px solid;
+  border-color: lightgray;
+  color: black;
+  background-color: #ECECEC;
+  font-size: medium;
 }

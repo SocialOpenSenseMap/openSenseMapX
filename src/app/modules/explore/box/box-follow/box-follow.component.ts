@@ -13,7 +13,6 @@ import { sensorIcons } from 'src/app/helper/sensorIcons';
   selector: 'osem-box-follow',
   templateUrl: './box-follow.component.html',
   styleUrls: ['./box-follow.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class BoxFollowComponent implements OnInit {
 
@@ -23,7 +22,6 @@ export class BoxFollowComponent implements OnInit {
   @Input() areNotificationsLoaded;
   sensorUnit;
   textForm;
-  messageToUser;
 
   constructor(
     private fb: FormBuilder,
@@ -36,7 +34,6 @@ export class BoxFollowComponent implements OnInit {
 
 
   async ngOnInit() {
-    this.notificationsService.messageToUser = "message appers here";
     await this.sleep(5000);
     console.log(this.notificationRules);
   }
