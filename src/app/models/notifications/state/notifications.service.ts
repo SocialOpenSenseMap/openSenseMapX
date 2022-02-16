@@ -233,10 +233,162 @@ export class NotificationsService {
     });
   }
 
+  /**
+   * To connect notification rules
+   * @param ruleA - this should be the entire rule
+   * @param ruleB - this should be the entire rule
+   * @param operator - "and", "or" or "xor"
+   */
+  async connectRules(ruleA,ruleB,operator) {
+    let headers = new HttpHeaders();
+    headers = headers.append('Authorization', 'Bearer '+window.localStorage.getItem('sb_accesstoken'));
+    let params = {
+      name: "connectorAB",
+      ruleA: ruleA._id.toString(),
+      ruleB: ruleB._id.toString(),
+      connectionOperator: operator,
+      active: true
+    }
+    this.http.post(`${environment.api_url}/notification/notificationRule/connect`, params, {headers: headers})
+    .pipe(catchError(err => {
+      this.messageToUser = "Rule already exists.";
+      throw 'An error occurred: ' + err;
+    }))
+    .subscribe(async (res:any) => {
+      this.messageToUser = "ok"; 
+      var d = new Date();
+      // give a notification that a rule was created
+      let newNotification = {
+        type: "rule-connector-created",
+        ruleA: ruleA._id,
+        ruleB: ruleA._id,
+        timeText: d.getDate() + "." + (d.getMonth()+1) + "." + (String(d.getFullYear()).slice(2,4)) + ", " + d.getHours() + ":" + d.getMinutes()
+      };
+      this.setNewNotification(newNotification);
+      // update the notification rules
+      res.data = {
+        ...res.data,
+        boxWholeA: ruleA.boxWhole,
+        // @ts-ignore // TODO: redundant
+        boxNameA: ruleA.boxWhole.name,
+        // @ts-ignore
+        boxExposureA: ruleA.boxWhole.exposure,
+        // @ts-ignore //TODO: a notificationRule could theoretically have more than one sensor, but Im not sure if we care about that...
+        sensorNameA: ruleA.sensorWhole.title,
+        sensorWholeA: ruleA.sensorWhole,
+        // @ts-ignore
+        boxDateA: ruleA.boxWhole.updatedAt,
+        boxWholeB: ruleB.boxWhole,
+        // @ts-ignore // TODO: redundant
+        boxNameB: ruleB.boxWhole.name,
+        // @ts-ignore
+        boxExposureB: ruleB.boxWhole.exposure,
+        // @ts-ignore //TODO: a notificationRule could theoretically have more than one sensor, but Im not sure if we care about that...
+        sensorNameB: ruleB.sensorWhole.title,
+        sensorWholeB: ruleB.sensorWhole,
+        // @ts-ignore
+        boxDateB: ruleB.boxWhole.updatedAt,
+      }
+      this.notificationsStore.update(state => ({
+        ...state,
+        notifications: (typeof state.notifications != "undefined") ? [newNotification].concat(state.notifications) : [newNotification],
+        notificationConnectors: [res.data].concat(state.notificationRules)
+      }));
+      // websocket
+      if (this.websocket) {
+        this.websocket.send('subscribe:'+res.data._id)
+      }
+    });
+  }
+
+  /**
+   * To update notification rule connectors
+   * @param connectorId - this should be id of the connector
+   * @param ruleA - this should be the entire rule
+   * @param ruleB - this should be the entire rule
+   * @param operator - "and", "or" or "xor"
+   */
+  updateConnector(connectorId, ruleA, ruleB, operator) {
+    let headers = new HttpHeaders();
+    headers = headers.append('Authorization', 'Bearer '+window.localStorage.getItem('sb_accesstoken'));
+    let params = {
+      name: "connectorAB",
+      ruleA: ruleA._id.toString(),
+      ruleB: ruleB._id.toString(),
+      connectionOperator: operator,
+      active: true
+    }
+    this.http.put(`${environment.api_url}/notification/notificationRule/connect/`+connectorId, params, {headers: headers}).subscribe(async (res:any) => {
+      res.data = {
+        ...res.data,
+        boxWholeA: ruleA.boxWhole,
+        // @ts-ignore // TODO: redundant
+        boxNameA: ruleA.boxWhole.name,
+        // @ts-ignore
+        boxExposureA: ruleA.boxWhole.exposure,
+        // @ts-ignore //TODO: a notificationRule could theoretically have more than one sensor, but Im not sure if we care about that...
+        sensorNameA: ruleA.sensorWhole.title,
+        sensorWholeA: ruleA.sensorWhole,
+        // @ts-ignore
+        boxDateA: ruleA.boxWhole.updatedAt,
+        boxWholeB: ruleB.boxWhole,
+        // @ts-ignore // TODO: redundant
+        boxNameB: ruleB.boxWhole.name,
+        // @ts-ignore
+        boxExposureB: ruleB.boxWhole.exposure,
+        // @ts-ignore //TODO: a notificationRule could theoretically have more than one sensor, but Im not sure if we care about that...
+        sensorNameB: ruleB.sensorWhole.title,
+        sensorWholeB: ruleB.sensorWhole,
+        // @ts-ignore
+        boxDateB: ruleB.boxWhole.updatedAt,
+      }
+      //@ts-ignore
+      let currentConnectors = this.notificationsStore.store._value.state.notificationConnectors;
+      let indexOfChanged = currentConnectors.findIndex(x => x._id === res.data._id);
+      if (indexOfChanged >= 0) currentConnectors[indexOfChanged] = res.data;
+      this.notificationsStore.update(state => ({
+        ...state,
+        notificationConnectors: currentConnectors
+      }));
+    });
+  }
+
+  /**
+   * To delete a notification rule connector
+   * @param connectorId - id of the connector
+   */
+  deleteConnector(connectorId) {
+    let headers = new HttpHeaders();
+    headers = headers.append('Authorization', 'Bearer '+window.localStorage.getItem('sb_accesstoken'));
+    this.http.delete(`${environment.api_url}/notification/notificationRule/connect/`+connectorId, {headers: headers}).subscribe((res:any) => {
+      //@ts-ignore
+      let currentConnectors = this.notificationsStore.store._value.state.notificationConnectors;
+      let indexOfDeleted = currentConnectors.findIndex(x => x._id === res.data._id);
+      if (indexOfDeleted >= 0) currentConnectors.splice(indexOfDeleted, 1);;
+      this.notificationsStore.update(state => ({
+        ...state,
+        notificationRules: currentConnectors
+      }));
+    });
+  }
+
   updateNotificationRule(params) {
     let headers = new HttpHeaders();
     headers = headers.append('Authorization', 'Bearer '+window.localStorage.getItem('sb_accesstoken'));
-    this.http.put(`${environment.api_url}/notification/notificationRule/`+params.notificationRuleId, params, {headers: headers}).subscribe((res:any) => {
+    this.http.put(`${environment.api_url}/notification/notificationRule/`+params.notificationRuleId, params, {headers: headers}).subscribe(async (res:any) => {
+      // update the notification rules
+      let box = await this.getBox(res.data.box, headers);
+      res.data = {
+        ...res.data,
+        // @ts-ignore
+        boxName: box.name,
+        // @ts-ignore
+        boxExposure: box.exposure,
+        // @ts-ignore //TODO: a notificationRule could theoretically have more than one sensor, but Im not sure if we care about that...
+        sensorName: box.sensors.find(sensor => sensor._id == res.data.sensors[0]).title,
+        // @ts-ignore
+        boxDate: box.updatedAt,
+      }
       //@ts-ignore
       let currentRules = this.notificationsStore.store._value.state.notificationRules;
       let indexOfChanged = currentRules.findIndex(x => x._id === res.data._id);
