@@ -9,7 +9,11 @@ tr:hover {
     background-color: #4eaf4746;
 }
 
+th { position: sticky; top: 0; z-index: 1; }
+
 .table-edit{
+    height: 500px;
+    overflow-y: auto;
 	border-radius: 3px;
 	border: none;
 	box-shadow: none;

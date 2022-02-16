@@ -31,6 +31,9 @@ import { ProfileContainerComponent } from './profile-container/profile-container
 import { ProfileFollowedBoxesComponent } from './profile-followed-boxes/profile-followed-boxes.component';
 import { ProfileFollowedBoxesContainerComponent } from './profile-followed-boxes-container/profile-followed-boxes-container.component';
 import { FilterByBoxNamePipe } from './profile-followed-boxes/filter-by-box-name.pipe';
+import { ConnectRulesComponent } from './profile-followed-boxes/connect-rules/connect-rules.component';
+import { ConnectRulesContainerComponent } from './profile-followed-boxes/connect-rules-container/connect-rules-container.component';
+import { ProfileConnectedRulesComponent } from './profile-followed-boxes/profile-connected-rules/profile-connected-rules.component';
 
 
 @NgModule({
@@ -60,7 +63,10 @@ import { FilterByBoxNamePipe } from './profile-followed-boxes/filter-by-box-name
     ProfileContainerComponent,
     ProfileFollowedBoxesComponent,
     ProfileFollowedBoxesContainerComponent,
-    FilterByBoxNamePipe
+    FilterByBoxNamePipe,
+    ConnectRulesComponent,
+    ConnectRulesContainerComponent,
+    ProfileConnectedRulesComponent
   ],
   imports: [
     CommonModule,

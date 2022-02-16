@@ -6,7 +6,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 
 export class FilterByBoxNamePipe implements PipeTransform {
 
-  transform(items: any, filter: any, defaultFilter: boolean): any {
+  transform(items: any, filter: any, defaultFilter=true): any {
     if (!filter){
       return items;
     }
@@ -32,5 +32,4 @@ export class FilterByBoxNamePipe implements PipeTransform {
       }
     }
   }
-
 }

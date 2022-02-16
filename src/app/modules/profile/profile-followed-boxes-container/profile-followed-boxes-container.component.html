@@ -2,3 +2,10 @@
   [notificationRules]="notificationRules$ | async"
   [user]="user$ | async">
 </osem-profile-followed-boxes>
+<p></p>
+<p> Connected rules</p>
+<osem-profile-connected-rules
+  [notificationRules]="notificationRules$ | async"
+  [notificationConnectors]="notificationConnectors$ | async"
+  [user]="user$ | async">
+</osem-profile-connected-rules>

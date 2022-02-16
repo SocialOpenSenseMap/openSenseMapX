@@ -152,13 +152,13 @@
           <td>
             <span class="osem-clickable-icon" 
             (click)="boxFollow(box.box)"
-            tiyle="Add new rule from same Box">
+            title="Add new rule from same Box">
               <i class="fa fa-plus-circle"></i>
             </span>
           </td>
           <td>
             <span class="osem-clickable-icon" 
-            (click)="connectItem(box._id)"
+            (click)="connectToRule(box._id,box.box )"
             title="Connect to another rule">
               <i class="fa fa-link"></i>
             </span>
@@ -170,7 +170,6 @@
     </div>
   </div>
 </div>
-
 
 <!--Pop up to confirm delete-->
 

@@ -14,7 +14,7 @@ import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http
 export class ProfileFollowedBoxesComponent implements OnInit {
     
   @Input() notificationRules;
-  @Input () user;
+  @Input() user;
   @Input() box;
 
   constructor(
@@ -22,10 +22,11 @@ export class ProfileFollowedBoxesComponent implements OnInit {
     private notificationsService: NotificationsService, 
     public router: Router,
     private changeDetector: ChangeDetectorRef,
-    private http: HttpClient) { }
+    private http: HttpClient,
+    private activatedRoute: ActivatedRoute
+  ) { }
 
   dataSource: any [] = [];
-  editField: string;
   idRule: string;
   confirm=false;
   create=false;
@@ -104,40 +105,10 @@ export class ProfileFollowedBoxesComponent implements OnInit {
     }
   }
 
-  //Functions for filtering
-  filterByName(){
-    // Declare variables
-    var input, filter, table, tr, td, i, txtValue;
-    input = document.getElementById("myInput");
-    filter = input.value.toUpperCase();
-    table = document.getElementById("table-rules");
-    tr = table.getElementsByTagName("tr");
-
-    // Loop through all table rows, and hide those who don't match the search query
-    for (i = 0; i < tr.length; i++) {
-      td = tr[i].getElementsByTagName("td")[0];
-      if (td) {
-        txtValue = td.textContent || td.innerText;
-        if (txtValue.toUpperCase().indexOf(filter) > -1) {
-          tr[i].style.display = "";
-        } else {
-          tr[i].style.display = "none";
-        }
-      }
-    }
-  }
-
   //Functions for deletetion of notification rule
 
   deleteItem(id:string) {
     this.confirm = true;
-    this.idRule=id;
-  }
-
-  //Connect rule
-
-  connectItem(id:string) {
-    this.connectRule = true;
     this.idRule=id;
   }
 
@@ -158,16 +129,40 @@ export class ProfileFollowedBoxesComponent implements OnInit {
   }
 
   boxFollow(id:string){
-    this.router.navigateByUrl('/(modal:follow-box)?boxId='+id)
+    this.router.navigateByUrl('/(modal:follow-box)?boxId='+id);
+    /**this.router.navigate(
+      [{outlets: {modal: 'follow-box'}}],
+      {
+        relativeTo: this.activatedRoute,
+        queryParams: { boxId: id },
+        queryParamsHandling: 'merge'
+      }
+    )**/
   }
 
+  //Functions connect rule
+  
+  connectToRule(boxId: string, ruleId:string){
+    this.router.navigate(
+      [{outlets: {modal: 'connect-rule'}}],
+      {
+        relativeTo: this.activatedRoute,
+        queryParams: { boxId: boxId, ruleId: ruleId },
+        queryParamsHandling: 'merge'
+      }
+    )
+  }
+
+  connectItem(id:string) {
+    this.connectRule = true;
+    this.idRule=id;
+  }
 
   async ngOnChanges(changes) {
     if(changes.notificationRules && typeof changes.notificationRules.currentValue != "undefined") {
       this.dataSource = changes.notificationRules.currentValue;
       this.unit = this.getUnit(this.dataSource);
     }
-    // @ts-ignore
   }
 
   async ngOnInit(){

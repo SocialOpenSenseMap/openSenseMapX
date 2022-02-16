@@ -1,0 +1,39 @@
+<div *ngIf="notificationRules">
+    <div class="card-header">
+        <a class="card-footer-item"><h1 class="title is-3">{{ notificationRules.name }}</h1></a>
+    </div>
+    <div class="osem-padding"> 
+        <form id="follow-box-form">
+            <div action="/action_page.php">
+                <label><p>Sensor:</p></label>
+                <select name="sensors" class="input is-small" id="form-sensors" required>
+                    <option value= "" disabled selected hidden>You can only sensors from boxes you already follow</option>
+                    <option *ngFor="let box of dataSource" [value]="box._id">{{ box.boxName }}</option>
+                </select>
+            </div>    
+    
+            <!--<div action="/action_page.php">
+                <label><p>Co:</p></label>
+                <select name="operator" class="input is-small" id="form-operators" required>
+                    <option value= "" disabled selected hidden>Operator</option>
+                    <option value="equal">equal</option>
+                    <option value="over">over</option>
+                    <option value="under">under</option>
+                </select>
+            </div>
+    
+            <div class="control">
+                <label>Threshold:</label>
+                <input class="input is-small" type="number" placeholder={{textForm}} id="form-thresholds">
+            </div>
+    
+            <div class="control">
+                <input type="checkbox" name="checkEmail" id="form-email" />
+                <label for="email">I want to receive notifications via email.</label>
+                
+            </div>
+            <button class="osem-button" (click)="sendNotification()">Follow Sensor</button>-->
+        </form>
+    </div>
+</div>
+    
