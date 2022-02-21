@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, Input, OnInit, ChangeDetectorRef } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
 import { NotificationsService } from 'src/app/models/notifications/state/notifications.service';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -7,7 +7,7 @@ import { BoxQuery } from 'src/app/models/box/state/box.query';
 import { BoxService } from 'src/app/models/box/state/box.service';
 import { SensorService } from 'src/app/models/sensor/state/sensor.service';
 import { HttpErrorResponse } from '@angular/common/http';
-import { sensorIcons } from 'src/app/helper/sensorIcons';
+import { UiService } from 'src/app/models/ui/state/ui.service';
 
 @Component({
   selector: 'osem-box-follow',
@@ -22,6 +22,7 @@ export class BoxFollowComponent implements OnInit {
   @Input() areNotificationsLoaded;
   sensorUnit;
   textForm;
+  textFormConnect;
 
   constructor(
     private fb: FormBuilder,
@@ -30,11 +31,11 @@ export class BoxFollowComponent implements OnInit {
     private boxQuery: BoxQuery,
     public notificationsService: NotificationsService,
     public router: Router,
-    private changeDetector: ChangeDetectorRef) {}
+    private changeDetector: ChangeDetectorRef,
+    private uiService: UiService) {}
 
 
   async ngOnInit() {
-    await this.sleep(5000);
     console.log(this.notificationRules);
   }
 
@@ -42,10 +43,6 @@ export class BoxFollowComponent implements OnInit {
     if (changes.user && typeof changes.user.currentValue != "undefined" && changes.user.currentValue != null) {
       this.notificationsService.getRulesAndConnectors();
     }
-  }
-
-  sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
   }
 
   async sendNotification() {
@@ -85,7 +82,6 @@ export class BoxFollowComponent implements OnInit {
       //   console.log(this.messageToUser)
       // })
     }
-    this.sleep(500);
     this.changeDetector.detectChanges();
     // TODO: what happens after a notification rule has bee created? Will the form close? Do you get some message that it worked?
   }
@@ -103,6 +99,21 @@ export class BoxFollowComponent implements OnInit {
       }
     }
   }
+
+  selectedConnect(){
+    let e = (document.getElementById("form-sensors-connect")) as HTMLSelectElement;
+    let sel = e.selectedIndex;
+    let opt = e.options[sel];
+    let chosenSensor = (<HTMLSelectElement><unknown>opt).textContent;
+    let boxSensors = this.activeBox.sensors;
+    for(let i = 0; i < boxSensors.length; i++) {
+      if (chosenSensor == boxSensors[i].title){
+        this.sensorUnit = boxSensors[i].unit;
+        this.textFormConnect = "Value in " + this.sensorUnit
+      }
+    }
+  }
+
   configCenter(){
     this.router.navigate(
       [{ outlets: { sidebar: ['m','profile','fbox'] }}]
