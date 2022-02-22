@@ -8,11 +8,11 @@ import { ActivatedRoute } from '@angular/router';
 import { NotificationsQuery } from 'src/app/models/notifications/state/notifications.query';
 
 @Component({
-  selector: 'osem-box-follow-container',
-  templateUrl: './box-follow-container.component.html',
-  styleUrls: ['./box-follow-container.component.scss']
+  selector: 'osem-box-connect-form-container',
+  templateUrl: './box-connect-form-container.component.html',
+  styleUrls: ['./box-connect-form-container.component.scss']
 })
-export class BoxFollowContainerComponent implements OnInit {
+export class BoxConnectFormContainerComponent implements OnInit {
 
   activeBox$: Observable<any>;
   user$ = this.sessionQuery.user$;

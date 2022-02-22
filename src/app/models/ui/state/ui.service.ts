@@ -5,6 +5,7 @@ import { ColorHelper } from '@swimlane/ngx-charts';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { first, tap } from 'rxjs/operators';
 import { environment } from './../../../../environments/environment';
+import { Observable, Subject } from 'rxjs';
 
 
 @Injectable({ providedIn: 'root' })
@@ -14,10 +15,21 @@ export class UiService {
 
   clusterTimeout;
 
+  private showAddConnect: boolean = false
+  private subject = new Subject<any>();
 
   constructor(
     private uiStore: UiStore, 
     private http: HttpClient) {
+  }
+
+  toggleAddConnect(): void {
+    this.showAddConnect = !this.showAddConnect;
+    this.subject.next(this.showAddConnect);
+  }
+
+  onToggle(): Observable<any> {
+    return this.subject.asObservable();
   }
 
   fetchStats() {
