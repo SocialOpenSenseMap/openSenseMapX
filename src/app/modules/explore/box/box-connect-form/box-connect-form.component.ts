@@ -22,6 +22,8 @@ export class BoxConnectFormComponent implements OnInit {
   @Input() areNotificationsLoaded;
   sensorUnitConnect;
   textFormConnect;
+  showAddConnect: boolean;
+  subscription: Subscription;
 
   constructor(
     private fb: FormBuilder,
@@ -31,8 +33,9 @@ export class BoxConnectFormComponent implements OnInit {
     public notificationsService: NotificationsService,
     public router: Router,
     private changeDetector: ChangeDetectorRef,
-    private uiService: UiService
-  ) { }
+    private uiService: UiService) {
+      this.subscription = this.uiService.onToggle().subscribe((value) => (this.showAddConnect = value));
+     }
 
   ngOnInit() {
   }

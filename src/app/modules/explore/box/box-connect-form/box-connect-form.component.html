@@ -1,6 +1,7 @@
-<!-- <div *ngIf="activeBox"> -->
+<div *ngIf="activeBox">
+<div *ngIf="showAddConnect">
     <div class="osem-padding">
-        <p>{{ activeBox.name }}</p>
+        <p class="title-box-follow">Connect two sensors</p>
         <form id="follow-box-form-connect">
             <div action="/action_page.php">
                 <label><p>Connector:</p></label>
@@ -15,7 +16,6 @@
                 <label><p>Sensor:</p></label>
                 <select name="sensors" class="input is-small" id="form-sensors-connect" (change)="selectedConnect()" required>
                     <option value= "" disabled selected hidden>Sensor</option>
-                    <option value= "">oiiiii</option>
                     <option *ngFor="let sensor of activeBox.sensors" [value]="sensor._id">{{ sensor.title }}</option>
                 </select>
             </div>    
@@ -34,5 +34,6 @@
             </div>
     </form>
     </div>
-<!-- </div> -->
+</div>    
+</div>
 

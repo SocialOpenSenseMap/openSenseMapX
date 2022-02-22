@@ -164,7 +164,14 @@ export class NotificationsService {
     headers = headers.append('Authorization', 'Bearer '+window.localStorage.getItem('sb_accesstoken'));
     this.http.post(`${environment.api_url}/notification/notificationRule`, params, {headers: headers})
       .pipe(catchError(err => {
-        this.messageToUser = "Rule already exists.";
+        console.log(err.status);
+        if (err.status == 422) {
+          this.messageToUser = "Fill all the boxes.";
+        } else if (err.status == 500) {
+          this.messageToUser = "Rule already exists."
+        } else {
+          this.messageToUser = "Something unexpected happened. Try again.";
+        }
         this.messageAppears = true;
         throw 'An error occurred: ' + err;
       }))
