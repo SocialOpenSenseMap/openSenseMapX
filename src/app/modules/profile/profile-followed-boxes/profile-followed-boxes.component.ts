@@ -16,6 +16,8 @@ export class ProfileFollowedBoxesComponent implements OnInit {
   @Input() notificationRules;
   @Input() user;
   @Input() box;
+  openCoverages: boolean;
+  indexSelectedCoverage: number;
 
   constructor(
     private notificationsQuery: NotificationsQuery, 
@@ -36,6 +38,11 @@ export class ProfileFollowedBoxesComponent implements OnInit {
   order: string = 'boxName';
   public searchText : string;
   public customerData : any;
+
+  selectItemCoverages(index: number) {
+    this.openCoverages = this.openCoverages && this.indexSelectedCoverage === index ? false : true;
+    this.indexSelectedCoverage = index;
+  }
 
   //Function for button to edit notification rule
   editableRule(index:number){
@@ -129,25 +136,23 @@ export class ProfileFollowedBoxesComponent implements OnInit {
   }
 
   boxFollow(id:string){
-    this.router.navigateByUrl('/(modal:follow-box)?boxId='+id);
-    /**this.router.navigate(
-      [{outlets: {modal: 'follow-box'}}],
+    this.router.navigate(
+      [{outlets: {modal: 'follow-box', sidebar :null}}],
       {
-        relativeTo: this.activatedRoute,
         queryParams: { boxId: id },
         queryParamsHandling: 'merge'
       }
-    )**/
+    )
   }
 
   //Functions connect rule
   
-  connectToRule(boxId: string, ruleId:string){
+  connectToRule(boxId:string){
+    console.log(boxId);
     this.router.navigate(
-      [{outlets: {modal: 'connect-rule'}}],
+      [{outlets: {modal: 'connect-rule', sidebar :null}}],
       {
-        relativeTo: this.activatedRoute,
-        queryParams: { boxId: boxId, ruleId: ruleId },
+        queryParams: { boxId: boxId },
         queryParamsHandling: 'merge'
       }
     )

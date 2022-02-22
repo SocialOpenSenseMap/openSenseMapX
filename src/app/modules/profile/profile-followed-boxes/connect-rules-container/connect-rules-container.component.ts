@@ -16,7 +16,7 @@ import { NotificationsService } from 'src/app/models/notifications/state/notific
 })
 export class ConnectRulesContainerComponent implements OnInit {
 
-  activeRule$: Observable<any>;
+  activeBox$: Observable<any>;
   user$ = this.sessionQuery.user$;
   notificationRules$ = this.notificationsQuery.notificationRules$;
   areNotificationsLoaded$ = this.notificationsQuery.areNotificationsLoaded$;
@@ -32,13 +32,10 @@ export class ConnectRulesContainerComponent implements OnInit {
     private notificationsQuery: NotificationsQuery) { }
 
   ngOnInit() {
-    /**this.activatedRoute.queryParams.subscribe(res => {
-      this.boxService.getSingleBox(res.ruleId).subscribe();
-      this.boxService.setActive(res.ruleId);
-      this.activeRule$ = this.boxQuery.selectActiveWithSensorAndUI();
-    });**/
     this.activatedRoute.queryParams.subscribe(res => {
-      this.notificationService.getSingleRule(res.boxId, res.ruleId);
+      this.boxService.getSingleBox(res.boxId).subscribe();
+      this.boxService.setActive(res.boxId);
+      this.activeBox$ = this.boxQuery.selectActiveWithSensorAndUI();
     });
   }
 

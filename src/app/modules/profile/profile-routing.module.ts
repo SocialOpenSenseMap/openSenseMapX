@@ -11,6 +11,7 @@ import { ProfileVisContainerComponent } from './profile-vis-container/profile-vi
 import { ProfileFollowedBoxesComponent } from './profile-followed-boxes/profile-followed-boxes.component';
 import { ProfileFollowedBoxesContainerComponent } from './profile-followed-boxes-container/profile-followed-boxes-container.component';
 import { ConnectRulesComponent } from './profile-followed-boxes/connect-rules/connect-rules.component';
+import { ConnectRulesContainerComponent } from './profile-followed-boxes/connect-rules-container/connect-rules-container.component';
 
 const routes: Routes = [
   {path: '', component: ProfileWrapperComponent, data: {name: 'Profil'}, children: [
@@ -22,7 +23,7 @@ const routes: Routes = [
       {path: 'sensors', component: ProfileBoxCreateSensorsContainerComponent},
     ]},
     {path: 'fbox', component: ProfileFollowedBoxesContainerComponent, data: {name: 'Followed Boxes'}},
-    {path: 'connect-rule', component: ConnectRulesComponent, outlet: 'modal'},
+    {path: 'connect-rule', component: ConnectRulesContainerComponent, outlet: 'modal'},
     {path: '', component: ProfileNavContainerComponent},
     {path: 'vis', component: ProfileVisContainerComponent, data: {name: 'Visulizations'}},
   ]},

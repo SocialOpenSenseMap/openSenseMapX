@@ -14,7 +14,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 })
 export class ConnectRulesComponent implements OnInit {
 
-  @Input() activeRule;
+  @Input() activeBox;
   @Input() user;
   @Input() notificationRules;
   @Input() areNotificationsLoaded;

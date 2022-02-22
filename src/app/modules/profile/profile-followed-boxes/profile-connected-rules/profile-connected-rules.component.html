@@ -13,7 +13,6 @@
             <th class="text-center">Active</th>
             <th class="text-center">Update</th>
             <th class="text-center">Delete</th>
-            <th class="text-center">Add</th>
           </tr>
       </thead>
       <tbody>
@@ -27,10 +26,12 @@
           <td>
             <div class="control">
               <div class="select">
-                <select class="input is-small osem-border-radius" id="{{ 'sel-operators' + i }}">
+                <select class="input is-small osem-border-radius" id="{{ 'sel-connectors' + i }}">
                   <option selected>{{rule.connectionOperator}}</option>
                   <option disabled class="separator"></option>
-                  <option *ngFor="let sensor of rule.sensorWholeA" [ngValue]="rule.sensorWholeA.title">{{rule.sensorWholeA.title}}</option>
+                  <option>and</option>
+                  <option>or</option>
+                  <option>xor</option>
                 </select>
               </div>
             </div>
@@ -51,21 +52,16 @@
           </td>
           <td>
             <span class="osem-clickable-icon" 
-              title="Save rule">
+              title="Save changes"
+              (click)="updateOperator(i, rule._id, rule.ruleA, rule.ruleB) ">
               <i class="fa fa-save"></i>
             </span>
           </td>
           <td>
             <span class="osem-clickable-icon" 
             (click)="deleteItem(rule._id)"
-            title="Delete rule">
+            title="Delete connection">
               <i class="fa fa-trash-alt"></i>
-            </span>
-          </td>
-          <td>
-            <span class="osem-clickable-icon" 
-            title="Add new rule from same Box">
-              <i class="fa fa-plus-circle"></i>
             </span>
           </td>
         </tr>
