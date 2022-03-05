@@ -10,7 +10,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 })
 export class NotificationsPopupContainerComponent implements OnInit {
 
-  newNotification$ = this.notificationsQuery.newNotification$;
+  //newNotification$ = this.notificationsQuery.newNotification$;
 
   constructor(private router: Router, private activatedRoute: ActivatedRoute, private notificationsService: NotificationsService, private notificationsQuery: NotificationsQuery) { }
 
