@@ -171,7 +171,6 @@ export class NotificationsService {
         sensorTitle: sensorTitle,
         timeText: d.getDate() + "." + (d.getMonth()+1) + "." + (String(d.getFullYear()).slice(2,4)) + ", " + d.getHours() + ":" + d.getMinutes()
       };
-      this.setNewNotification(newNotification);
       // update the notification rules
       let box = await this.getBox(res.data.box, headers) as {
         sensors: Array<any>,
@@ -231,7 +230,6 @@ export class NotificationsService {
         ruleB: ruleA._id,
         timeText: d.getDate() + "." + (d.getMonth()+1) + "." + (String(d.getFullYear()).slice(2,4)) + ", " + d.getHours() + ":" + d.getMinutes()
       };
-      this.setNewNotification(newNotification);
       // update the notification rules
       res.data = {
         ...res.data,
@@ -372,14 +370,6 @@ export class NotificationsService {
         }
       });
     });
-  }
-
-  // this will be shown in the popup
-  setNewNotification(newNotification) {
-    this.notificationsStore.update(state => ({
-      ...state,
-      newNotification: newNotification
-    }))
   }
 
   getBox(id, headers){

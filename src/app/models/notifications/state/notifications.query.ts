@@ -12,10 +12,6 @@ export class NotificationsQuery extends Query<NotificationsState> {
     return state.notifications;
   });
 
-  newNotification$ = this.select(state => {
-    return state.newNotification;
-  });
-
   areNotificationsLoaded$ = this.select(state => {
     return state.areNotificationsLoaded;
   });
