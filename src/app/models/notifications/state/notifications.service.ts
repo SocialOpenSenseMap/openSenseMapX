@@ -452,7 +452,7 @@ export class NotificationsService {
           };
           let sensorsB = [];
           for ( let i = 0; i < message.resultB.rule.sensors.length; i++) {
-            sensorsB.push(boxA.sensors.find(sensor => sensor._id == message.resultB.rule.sensors[i]))
+            sensorsB.push(boxB.sensors.find(sensor => sensor._id == message.resultB.rule.sensors[i]))
           }
           let notification = {
             notificationRule: message.connectorID,
