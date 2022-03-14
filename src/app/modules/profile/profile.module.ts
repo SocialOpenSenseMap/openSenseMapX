@@ -2,6 +2,7 @@ import { SharedModule } from './../shared/shared.module';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { OrderModule } from 'ngx-order-pipe';
 
 import { ProfileRoutingModule } from './profile-routing.module';
 import { ProfileWrapperComponent } from './profile-wrapper/profile-wrapper.component';
@@ -29,6 +30,11 @@ import { MyBoxesComponent } from './my-boxes/my-boxes.component';
 import { ProfileContainerComponent } from './profile-container/profile-container.component';
 import { ProfileFollowedBoxesComponent } from './profile-followed-boxes/profile-followed-boxes.component';
 import { ProfileFollowedBoxesContainerComponent } from './profile-followed-boxes-container/profile-followed-boxes-container.component';
+import { FilterByBoxNamePipe } from './profile-followed-boxes/filter-by-box-name.pipe';
+import { ConnectRulesComponent } from './profile-followed-boxes/connect-rules/connect-rules.component';
+import { ConnectRulesContainerComponent } from './profile-followed-boxes/connect-rules-container/connect-rules-container.component';
+import { ProfileConnectedRulesComponent } from './profile-followed-boxes/profile-connected-rules/profile-connected-rules.component';
+import { UniqueByBoxPipePipe } from './profile-followed-boxes/connect-rules/unique-by-box-pipe.pipe';
 
 
 @NgModule({
@@ -57,14 +63,20 @@ import { ProfileFollowedBoxesContainerComponent } from './profile-followed-boxes
     MyBoxesComponent,
     ProfileContainerComponent,
     ProfileFollowedBoxesComponent,
-    ProfileFollowedBoxesContainerComponent
+    ProfileFollowedBoxesContainerComponent,
+    FilterByBoxNamePipe,
+    ConnectRulesComponent,
+    ConnectRulesContainerComponent,
+    ProfileConnectedRulesComponent,
+    UniqueByBoxPipePipe
   ],
   imports: [
     CommonModule,
     ProfileRoutingModule,
     FormsModule,
     ReactiveFormsModule,
-    SharedModule
+    SharedModule,
+    OrderModule
   ]
 })
 export class ProfileModule { }

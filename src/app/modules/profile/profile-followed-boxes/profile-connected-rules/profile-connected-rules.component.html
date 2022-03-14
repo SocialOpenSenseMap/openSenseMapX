@@ -1,0 +1,90 @@
+<p></p>
+<!--Table of connected rules-->
+<div id="table is-narrow is-hoverable" class="table-edit">
+  <div class="table-container">
+    <table id="table-rules" class="table">
+        <thead>
+          <tr>
+            <th class="text-center">Box first rule</th>
+            <th class="text-center">Sensor first rule</th>
+            <th class="text-center">Connection operator</th>
+            <th class="text-center">Box second rule</th>
+            <th class="text-center">Sensor second rule</th>
+            <th class="text-center">Active</th>
+            <th class="text-center">Update</th>
+            <th class="text-center">Delete</th>
+          </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let rule of dataSource; let i=index;" >
+          <td>
+            <span contenteditable="false">{{rule.boxNameA}}</span>
+          </td>
+          <td>
+            <span contenteditable="false">{{rule.sensorNameA}}</span>
+          </td>
+          <td>
+            <div class="control">
+              <div class="select">
+                <select class="input is-small osem-border-radius" id="{{ 'sel-connectors' + i }}">
+                  <option selected>{{rule.connectionOperator}}</option>
+                  <option disabled class="separator"></option>
+                  <option>and</option>
+                  <option>or</option>
+                  <option>xor</option>
+                </select>
+              </div>
+            </div>
+          </td>
+          <td>
+            <span contenteditable="false">{{rule.boxNameB}}</span>
+          </td>
+          <td>
+            <span contenteditable="false">{{rule.sensorNameB}}</span>
+          </td>
+          <td>
+            <span *ngIf= "rule.active!=''; else elseActive" contenteditable="true">
+              <input class="form-check-input" type="checkbox" id="{{ 'check-active' + i }}" value="something" checked>
+            </span>
+            <ng-template #elseActive>
+              <input class="form-check-input" type="checkbox" id="{{ 'check-active' + i }}" value="something">
+            </ng-template>
+          </td>
+          <td>
+            <span class="osem-clickable-icon" 
+              title="Save changes"
+              (click)="updateOperator(i, rule, rule.ruleA, rule.ruleB, rule.active) ">
+              <i class="fa fa-save"></i>
+            </span>
+          </td>
+          <td>
+            <span class="osem-clickable-icon" 
+            (click)="deleteItem(rule._id)"
+            title="Delete connection">
+              <i class="fa fa-trash-alt"></i>
+            </span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!--Pop up to confirm delete-->
+
+<div class="modal" [class.is-active]="confirm">
+  <div class="modal-background"></div>
+  <div class="modal-card">
+    <header class="modal-card-head">
+      <p class="modal-card-title">Confirm deletion</p>
+      <button class="delete" aria-label="close" (click)="cancel()" ></button>
+    </header>
+    <section class="modal-card-body">
+          <p>Are you sure do you want to delete this connection ?</p>
+    </section>
+    <footer class="modal-card-foot">
+      <button class="button is-success" (click)="remove(idRule)">Yes</button>
+      <button class="button" (click)="cancel()" >No</button>
+    </footer>
+  </div>
+</div>

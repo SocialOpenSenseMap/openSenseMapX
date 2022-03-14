@@ -39,9 +39,9 @@
     "mapbox-gl": "^1.13.1",
     "moment": "^2.29.1",
     "ngx-color-picker": "^11.0.0",
+    "ngx-order-pipe": "^2.2.0",
     "normalizr": "^3.6.1",
     "rxjs": "~6.6.7",
-    "smart-webcomponents-angular": "^10.2.13",
     "tslib": "^2.0.0",
     "zone.js": "~0.10.2"
   },

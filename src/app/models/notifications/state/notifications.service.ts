@@ -7,6 +7,7 @@ import { environment } from '../../../../environments/environment';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs/internal/Observable';
 import { catchError } from 'rxjs/operators';
+import * as moment from 'moment';
 
 @Injectable({ providedIn: 'root' })
 export class NotificationsService {
@@ -59,7 +60,7 @@ export class NotificationsService {
             let notification = notificationRule.notifications[j];
             notification = {
               ...notification,
-              timeText: moment(notification.notificationTime).format("DD.MM.YYYY, HH:mm"),
+              //timeText: moment(notification.notificationTime).format("DD.MM.YYYY, HH:mm"),
               type: "threshold",
               activationOperator: notificationRule.activationOperator,
               activationThreshold: notificationRule.activationThreshold,
@@ -153,6 +154,36 @@ export class NotificationsService {
         // after everything loaded initialize the websocket
         this.initializeWebsocket()
       });
+    });
+  }
+
+  getSingleRule(idBox, idRule){
+    let headers = new HttpHeaders();
+    headers = headers.append('Authorization', 'Bearer '+window.localStorage.getItem('sb_accesstoken'));
+    this.http.get(this.AUTH_API_URL + `/notification/notificationRule/${idBox}/${idRule}`, {headers: headers}).subscribe(async (res:any)=> {
+      let rule = res.data;
+      rule = {
+        "_id": "61ead7e3aad37d5f841028ad",
+        box: rule.box,
+        name: rule.name,
+        activationThreshold: rule.activationThreshold,
+        activationOperator: rule.activationOperator,
+        /**"connected": [
+            "6203cea8548b862fb8f459b3",
+            "620683f7e2ba7651f05ff301"
+        ],**/
+        /**"notificationChannel": [
+            {
+                "email": "jfranco@uni-muenster.de",
+                "channel": "email",
+                "_id": "6200eac73030ba1da0762652"
+            }
+        ],**/
+        activationTrigger: rule.activator,
+        /**"sensors": [
+            "61ead682aad37d5f841028ac"
+        ]**/
+      }
     });
   }
 
