@@ -1,9 +1,12 @@
+<p class="title text-center">Configuration center.</p>
+<p class="subtitle text-center">Followed boxes:</p>
 <osem-profile-followed-boxes
   [notificationRules]="notificationRules$ | async"
   [user]="user$ | async">
 </osem-profile-followed-boxes>
-<p></p>
-<p> Connected rules</p>
+<br>
+<p class="subtitle text-center"> Rule connections:</p>
+
 <osem-profile-connected-rules
   [notificationRules]="notificationRules$ | async"
   [notificationConnectors]="notificationConnectors$ | async"

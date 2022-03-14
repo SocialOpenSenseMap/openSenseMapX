@@ -1,39 +1,60 @@
-<div *ngIf="notificationRules">
+<div *ngIf="activeBox">
     <div class="card-header">
-        <a class="card-footer-item"><h1 class="title is-3">{{ notificationRules.name }}</h1></a>
+        <a class="card-footer-item"><h1 class="title is-3">{{ activeBox.name }}</h1></a>
     </div>
-    <div class="osem-padding"> 
+    <!-- <div class="osem-padding"> 
         <form id="follow-box-form">
             <div action="/action_page.php">
-                <label><p>Sensor:</p></label>
-                <select name="sensors" class="input is-small" id="form-sensors" required>
-                    <option value= "" disabled selected hidden>You can only sensors from boxes you already follow</option>
-                    <option *ngFor="let box of dataSource" [value]="box._id">{{ box.boxName }}</option>
-                </select>
-            </div>    
-    
-            <!--<div action="/action_page.php">
-                <label><p>Co:</p></label>
-                <select name="operator" class="input is-small" id="form-operators" required>
-                    <option value= "" disabled selected hidden>Operator</option>
-                    <option value="equal">equal</option>
-                    <option value="over">over</option>
-                    <option value="under">under</option>
-                </select>
+                <label><p>Sensor:</p><p>You can only sensors from boxes you already follow.</p></label>
             </div>
-    
             <div class="control">
-                <label>Threshold:</label>
-                <input class="input is-small" type="number" placeholder={{textForm}} id="form-thresholds">
-            </div>
-    
-            <div class="control">
-                <input type="checkbox" name="checkEmail" id="form-email" />
-                <label for="email">I want to receive notifications via email.</label>
-                
-            </div>
-            <button class="osem-button" (click)="sendNotification()">Follow Sensor</button>-->
+                <div class="select">
+                  <select class="input is-small osem-border-radius" id="{{ 'sel-sensor'}}">
+                    <option selected>Select rule to connect.</option>
+                    <option disabled class="separator"></option>
+                    <option *ngFor="let sensor of activeBox.sensors" [value]="sensor._id">{{ sensor.title }}</option>
+                  </select>
+                </div>
+                <div class="select">
+                    <select class="input is-small osem-border-radius" id="{{ 'sel-operator'}}">
+                      <option selected>Select connection operator</option>
+                      <option disabled class="separator"></option>
+                      <option value=1>and</option>
+                      <option value=2>or</option>
+                      <option value=3>xor</option>
+                    </select>
+                  </div>
+            </div> 
         </form>
-    </div>
+        <div id="table is-narrow is-hoverable" class="table-edit">
+            <div class="table-container">
+                <div class="label">Select second Box
+                  <span>
+                    <input [(ngModel)]="searchText" 
+                      placeholder="Filter.." 
+                      class="input is-small osem-border-radius"
+                      style="background-color:white; 
+                      height: 30px; 
+                      font-size:18px; 
+                      vertical-align:9px;
+                      color:#bbb"></span>
+                    <select class="input is-small osem-border-radius" id="{{ 'sel-sensor'}}">
+                      <option selected>Select box.</option>
+                      <option disabled class="separator"></option>
+                      <option *ngFor="let box of dataSource | filterByBoxName: {boxName: searchText} | orderBy: order | uniqueByBoxPipe; let i=index;">{{box.boxName}}</option>
+                    </select>
+                </div>
+                <span class="osem-clickable-icon" 
+              title="Save"
+              (click)="createConnection(i, rule, rule.ruleA, rule.ruleB, rule.active) ">
+              <i class="fa fa-save"></i>
+            </span>
+            <span class="osem-clickable-icon" 
+            (click)="cancel(rule._id)"
+            title="Cancel">
+              <i class="fa fa-trash-alt"></i>
+            </span>
+            </div>
+        </div>
+    </div> -->
 </div>
-    

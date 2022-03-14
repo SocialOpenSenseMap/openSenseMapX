@@ -31,11 +31,15 @@ export class ProfileConnectedRulesComponent implements OnInit {
   confirm=false;
   
   //Function to update connector
-  updateOperator(i:number, id:string, ruleA: string, ruleB: string){
+  updateOperator(i:number, id:string, ruleA: string, ruleB: string, active: boolean){
     let e = (document.getElementById('sel-connectors'+i)) as HTMLSelectElement;
     let operators = e.options[e.selectedIndex].text;
-    console.log(id);
-    this.notificationsService.updateConnector(id, ruleA, ruleB, operators)
+    active=false;
+    // @ts-ignore
+    if(document.getElementById('check-active'+i).checked){
+      active=true;
+    }
+    this.notificationsService.updateConnector(id, ruleA, ruleB, operators, active)
   }
 
   //Functions for deletion of connection

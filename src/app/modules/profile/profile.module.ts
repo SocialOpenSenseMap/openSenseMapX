@@ -34,6 +34,7 @@ import { FilterByBoxNamePipe } from './profile-followed-boxes/filter-by-box-name
 import { ConnectRulesComponent } from './profile-followed-boxes/connect-rules/connect-rules.component';
 import { ConnectRulesContainerComponent } from './profile-followed-boxes/connect-rules-container/connect-rules-container.component';
 import { ProfileConnectedRulesComponent } from './profile-followed-boxes/profile-connected-rules/profile-connected-rules.component';
+import { UniqueByBoxPipePipe } from './profile-followed-boxes/connect-rules/unique-by-box-pipe.pipe';
 
 
 @NgModule({
@@ -66,7 +67,8 @@ import { ProfileConnectedRulesComponent } from './profile-followed-boxes/profile
     FilterByBoxNamePipe,
     ConnectRulesComponent,
     ConnectRulesContainerComponent,
-    ProfileConnectedRulesComponent
+    ProfileConnectedRulesComponent,
+    UniqueByBoxPipePipe
   ],
   imports: [
     CommonModule,

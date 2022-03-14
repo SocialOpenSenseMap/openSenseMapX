@@ -18,6 +18,7 @@ export class ConnectRulesComponent implements OnInit {
   @Input() user;
   @Input() notificationRules;
   @Input() areNotificationsLoaded;
+  @Input() ruleId;
   sensorUnit;
   textForm;
   messageToUser;
@@ -33,10 +34,12 @@ export class ConnectRulesComponent implements OnInit {
   ) { }
 
   dataSource: any [] = [];
+  public searchText : string;
+  order: string = 'boxName';
 
   async ngOnInit() {
     await this.sleep(5000);
-    console.log(this.notificationRules);
+    console.log(this.ruleId);
   }
 
   async ngOnChanges(changes) {
@@ -44,6 +47,17 @@ export class ConnectRulesComponent implements OnInit {
       this.notificationsService.getRulesAndConnectors();
       this.dataSource = changes.notificationRules.currentValue;
     }
+  }
+
+  createConnection(i:number, id:string, ruleA: string, ruleB: string, active: boolean){
+    let e = (document.getElementById('sel-connectors'+i)) as HTMLSelectElement;
+    let operators = e.options[e.selectedIndex].text;
+    active=false;
+    // @ts-ignore
+    if(document.getElementById('check-active'+i).checked){
+      active=true;
+    }
+    this.notificationsService.updateConnector(id, ruleA, ruleB, operators, active)
   }
 
   sleep(ms) {

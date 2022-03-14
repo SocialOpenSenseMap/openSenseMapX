@@ -20,6 +20,7 @@ export class ConnectRulesContainerComponent implements OnInit {
   user$ = this.sessionQuery.user$;
   notificationRules$ = this.notificationsQuery.notificationRules$;
   areNotificationsLoaded$ = this.notificationsQuery.areNotificationsLoaded$;
+  ruleId$:any;
 
   constructor(
     private uiQuery: UiQuery, 
@@ -36,6 +37,8 @@ export class ConnectRulesContainerComponent implements OnInit {
       this.boxService.getSingleBox(res.boxId).subscribe();
       this.boxService.setActive(res.boxId);
       this.activeBox$ = this.boxQuery.selectActiveWithSensorAndUI();
+      console.log(res.ruleId);
+      this.ruleId$ = this.notificationService.getSingleRule(res.boxId, res.ruleId);
     });
   }
 

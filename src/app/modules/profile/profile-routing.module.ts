@@ -22,7 +22,7 @@ const routes: Routes = [
       {path: 'general', component: ProfileBoxCreateGeneralContainerComponent},
       {path: 'sensors', component: ProfileBoxCreateSensorsContainerComponent},
     ]},
-    {path: 'fbox', component: ProfileFollowedBoxesContainerComponent, data: {name: 'Followed Boxes'}},
+    {path: 'fbox', component: ProfileFollowedBoxesContainerComponent, data: {name: 'Configuration center'}},
     {path: 'connect-rule', component: ConnectRulesContainerComponent, outlet: 'modal'},
     {path: '', component: ProfileNavContainerComponent},
     {path: 'vis', component: ProfileVisContainerComponent, data: {name: 'Visulizations'}},

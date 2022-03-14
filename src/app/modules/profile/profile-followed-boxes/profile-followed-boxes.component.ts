@@ -25,7 +25,7 @@ export class ProfileFollowedBoxesComponent implements OnInit {
     public router: Router,
     private changeDetector: ChangeDetectorRef,
     private http: HttpClient,
-    private activatedRoute: ActivatedRoute
+    private activatedRoute: ActivatedRoute,
   ) { }
 
   dataSource: any [] = [];
@@ -112,7 +112,7 @@ export class ProfileFollowedBoxesComponent implements OnInit {
     }
   }
 
-  //Functions for deletetion of notification rule
+  //Functions for deletion of notification rule
 
   deleteItem(id:string) {
     this.confirm = true;
@@ -147,12 +147,12 @@ export class ProfileFollowedBoxesComponent implements OnInit {
 
   //Functions connect rule
   
-  connectToRule(boxId:string){
+  connectToRule(boxId:string, ruleId:string){
     console.log(boxId);
     this.router.navigate(
       [{outlets: {modal: 'connect-rule', sidebar :null}}],
       {
-        queryParams: { boxId: boxId },
+        queryParams: { boxId: boxId , ruleId: ruleId},
         queryParamsHandling: 'merge'
       }
     )
