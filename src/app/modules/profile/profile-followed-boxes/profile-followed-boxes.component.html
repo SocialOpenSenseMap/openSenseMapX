@@ -6,23 +6,36 @@
   <body>
 <div class="card">
   <div class="card-body">
-    <div id="table is-narrow is-hoverable" class="table-editable">
+    <div id="table is-narrow is-hoverable" class="table-edit">
+      <div class="table-container">
       <table id="table-rules" class="table">
         <thead>
         <tr>
-          <th class="text-center">Box Name</th>
+          <th class="text-center">Box Name
+            <span>
+              <input [(ngModel)]="searchText" 
+                placeholder="Filter.." 
+                class="input is-small osem-border-radius"
+                style="background-color:white; 
+                height: 30px; 
+                font-size:18px; 
+                vertical-align:9px;
+                color:#bbb"></span>
+          </th>
           <th class="text-center">Sensor</th>
           <th class="text-center">Exposure</th>
           <th class="text-center">Action</th>
           <th class="text-center">Value</th>
           <th class="text-center">Email</th>
+          <th class="text-center">Active</th>
           <th class="text-center">Update</th>
           <th class="text-center">Delete</th>
           <th class="text-center">Add</th>
+          <th class="text-center">Connect</th>
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let box of dataSource; let i = index " >
+          <tr *ngFor="let box of dataSource | filterByBoxName: {boxName: searchText} | orderBy: order; let i=index;" >
           <td>
               <span contenteditable="false">{{box.boxName}}</span>
           </td>
@@ -49,8 +62,11 @@
           <td>
             
             <span *ngIf= "box.activationOperator=='unusual' ; else elseValue">
-              <input class="input is-small osem-border-radius" type="number" min=0 max=100 [value]= "box.activationThreshold" id="{{ 'form-thresholds' + i }}" title="min. 0% max. 100%" >
-              <span>{{unit}}</span>
+              <input class="input is-small osem-border-radius" 
+                type="number" min=0 max=100 
+                [value]= "box.activationThreshold"
+                id="{{ 'form-thresholds' + i }}" 
+                title="min. 0% max. 100%" >
             </span>
             <ng-template #elseValue>
               <div [ngSwitch]="box.sensorName">
@@ -64,19 +80,39 @@
                   <input class="input is-small osem-border-radius" type="number"  [value]= "box.activationThreshold" id="{{ 'form-thresholds' + i }}" title="Luftdruck">
                 </span>
                 <span *ngSwitchCase="'Beleuchtungsstaerke'">
-                  <input class="input is-small osem-border-radius" type="number"  [value]= "box.activationThreshold" id="{{ 'form-thresholds' + i }}" title="min. 0% max. 100%">
+                  <input class="input is-small osem-border-radius" 
+                  type="number"  
+                  [value]= "box.activationThreshold" 
+                  id="{{ 'form-thresholds' + i }}" 
+                  title="min. 0% max. 100%">
                 </span>
                 <span *ngSwitchCase="'UV-Intensitaet'">
-                  <input class="input is-small osem-border-radius" type="number"  [value]= "box.activationThreshold" id="{{ 'form-thresholds' + i }}" title="UV-Intensitaet">
+                  <input class="input is-small osem-border-radius" 
+                  type="number"  
+                  [value]= "box.activationThreshold" 
+                  id="{{ 'form-thresholds' + i }}" 
+                  title="UV-Intensitaet">
                 </span>
                 <span *ngSwitchCase="'PM10'">
-                  <input class="input is-small osem-border-radius" type="number"  [value]= "box.activationThreshold" id="{{ 'form-thresholds' + i }}" title="PM10">
+                  <input class="input is-small osem-border-radius" 
+                  type="number"  
+                  [value]= "box.activationThreshold" 
+                  id="{{ 'form-thresholds' + i }}" 
+                  title="PM10">
                 </span>
                 <span *ngSwitchCase="'PM2.5'">
-                  <input class="input is-small osem-border-radius" type="number"  [value]= "box.activationThreshold" id="{{ 'form-thresholds' + i }}" title="PM2.5">
+                  <input class="input is-small osem-border-radius" 
+                  type="number"  
+                  [value]= "box.activationThreshold" 
+                  id="{{ 'form-thresholds' + i }}" 
+                  title="PM2.5">
                 </span>
                 <span *ngSwitchDefault>
-                  <input class="input is-small osem-border-radius" type="number"  [value]= "box.activationThreshold" id="{{ 'form-thresholds' + i }}" title="Hola">
+                  <input class="input is-small osem-border-radius" 
+                  type="number"  
+                  [value]= "box.activationThreshold" 
+                  id="{{ 'form-thresholds' + i }}" 
+                  title="">
                 </span>
               </div>
             </ng-template>
@@ -91,27 +127,48 @@
             </ng-template>
           </td>
           <td>
-              <span class="osem-clickable-icon" (click)="updateValue(i,box._id, box.sensors, box.box, box.name, box.activationTrigger, box.active, box.user, box.notificationChannel, $event)">
-                <i class="fa fa-save"></i>
-                </span>
+            <span *ngIf= "box.active!=''; else elseActive" contenteditable="true">
+              <input class="form-check-input" type="checkbox" id="{{ 'check-active' + i }}" name="option2" value="something" checked>
+            </span>
+            <ng-template #elseActive>
+              <input class="form-check-input" type="checkbox" id="{{ 'check-active' + i }}" name="option2" value="something">
+            </ng-template>
           </td>
           <td>
-              <span class="osem-clickable-icon" (click)="selectItem(box._id)">
-                <i class="fa fa-trash-alt"></i>
+            <span class="osem-clickable-icon" 
+            (click)="updateValue(i,box._id, box.sensors, box.box, box.name, box.activationTrigger, box.active, box.user, $event)"
+            title="Save rule">
+              <i class="fa fa-save"></i>
               </span>
           </td>
           <td>
-            <span class="osem-clickable-icon" (click)="boxFollow(box.box)">
+            <span class="osem-clickable-icon" 
+            (click)="deleteItem(box._id)"
+            title="Delete rule">
+              <i class="fa fa-trash-alt"></i>
+            </span>
+          </td>
+          <td>
+            <span class="osem-clickable-icon" 
+            (click)="boxFollow(box.box)"
+            title="Add new rule from same Box">
               <i class="fa fa-plus-circle"></i>
             </span>
           </td>
+          <td>
+            <span class="osem-clickable-icon" 
+            (click)="connectToRule(box.box, box._id)"
+            title="Connect to another rule">
+              <i class="fa fa-link"></i>
+            </span>
+        </td>
         </tr>
       </tbody>
       </table>
+      </div>
     </div>
   </div>
 </div>
-
 
 <!--Pop up to confirm delete-->
 
@@ -127,6 +184,25 @@
     </section>
     <footer class="modal-card-foot">
       <button class="button is-success" (click)="remove(idRule)">Yes</button>
+      <button class="button" (click)="cancel()" >No</button>
+    </footer>
+  </div>
+</div>
+
+<!--Pop up to connect rule-->
+
+<div class="modal" [class.is-active]="connectRule">
+  <div class="modal-background"></div>
+  <div class="modal-card">
+    <header class="modal-card-head">
+      <p class="modal-card-title">This is to connect to another rule</p>
+      <button class="delete" aria-label="close" (click)="cancel()" ></button>
+    </header>
+    <section class="modal-card-body">
+          <p>This is to connect to another rule</p>
+    </section>
+    <footer class="modal-card-foot">
+      <!--<button class="button is-success" (click)="remove(idRule)">Yes</button>-->
       <button class="button" (click)="cancel()" >No</button>
     </footer>
   </div>
