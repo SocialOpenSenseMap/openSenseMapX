@@ -9,7 +9,6 @@ import { Observable } from 'rxjs/internal/Observable';
 import { catchError } from 'rxjs/operators';
 import * as moment from 'moment';
 
-
 @Injectable({ providedIn: 'root' })
 export class NotificationsService {
 
@@ -39,23 +38,24 @@ export class NotificationsService {
       for (let i = 0; i < notificationRules.length; i++) {
         try {
           let notificationRule = notificationRules[i];
-          let box = await this.getBox(notificationRule.box, headers);
+          let box = await this.getBox(notificationRule.box, headers) as {
+            sensors: Array<any>,
+            name: string,
+            exposure: string,
+            updatedAt: string
+          };
           let sensors = [];
           for ( let i = 0; i < notificationRule.sensors.length; i++) {
-            // @ts-ignore
             sensors.push(box.sensors.find(sensor => sensor._id == notificationRule.sensors[i]))
           }
           notificationRules[i] = {
             ...notificationRule,
             boxWhole:box,
-            // @ts-ignore // TODO: redundant
             boxName: box.name,
-            // @ts-ignore
             boxExposure: box.exposure,
-            // @ts-ignore //TODO: a notificationRule could theoretically have more than one sensor, but Im not sure if we care about that...
+            //TODO: a notificationRule could theoretically have more than one sensor, but Im not sure if we care about that...
             sensorName: sensors[0].title,
             sensorWhole: sensors[0],
-            // @ts-ignore
             boxDate: box.updatedAt,
           }
           for (let j = 0; j < notificationRule.notifications.length; j++) {
@@ -68,7 +68,6 @@ export class NotificationsService {
               activationThreshold: notificationRule.activationThreshold,
               ruleName: notificationRule.name,
               box: box,
-              // @ts-ignore
               sensors: sensors
             }
             notifications.push(notification)
@@ -118,24 +117,18 @@ export class NotificationsService {
             res.data[i] = {
               ...res.data[i],
               boxWholeA: ruleA.boxWhole,
-              // @ts-ignore // TODO: redundant
               boxNameA: ruleA.boxWhole.name,
-              // @ts-ignore
               boxExposureA: ruleA.boxWhole.exposure,
-              // @ts-ignore //TODO: a notificationRule could theoretically have more than one sensor, but Im not sure if we care about that...
+              //TODO: a notificationRule could theoretically have more than one sensor, but Im not sure if we care about that...
               sensorNameA: ruleA.sensorWhole.title,
               sensorWholeA: ruleA.sensorWhole,
-              // @ts-ignore
               boxDateA: ruleA.boxWhole.updatedAt,
               boxWholeB: ruleB.boxWhole,
-              // @ts-ignore // TODO: redundant
               boxNameB: ruleB.boxWhole.name,
-              // @ts-ignore
               boxExposureB: ruleB.boxWhole.exposure,
-              // @ts-ignore //TODO: a notificationRule could theoretically have more than one sensor, but Im not sure if we care about that...
+              //TODO: a notificationRule could theoretically have more than one sensor, but Im not sure if we care about that...
               sensorNameB: ruleB.sensorWhole.title,
               sensorWholeB: ruleB.sensorWhole,
-              // @ts-ignore
               boxDateB: ruleB.boxWhole.updatedAt,
             }
           } catch(e) {
@@ -144,15 +137,16 @@ export class NotificationsService {
             i--;
           }
         }
-        // @ts-ignore
-        notifications = notifications.concat(this.notificationsStore.store._value.state.notifications)
-        notifications.sort((a,b) => b.notificationTime.localeCompare(a.notificationTime));
-        this.notificationsStore.update(state => ({
-          ...state,
-          notifications: notifications,
-          notificationConnectors: res.data,
-          areNotificationsLoaded: true
-        }));
+        this.notificationsStore.update(state => {
+          notifications = notifications.concat(state.notifications)
+          notifications.sort((a,b) => b.notificationTime.localeCompare(a.notificationTime));
+          return {
+            ...state,
+            notifications: notifications,
+            notificationConnectors: res.data,
+            areNotificationsLoaded: true
+          }
+        });
         // after everything loaded initialize the websocket
         this.initializeWebsocket()
       });
@@ -214,18 +208,19 @@ export class NotificationsService {
         sensorTitle: sensorTitle,
         timeText: d.getDate() + "." + (d.getMonth()+1) + "." + (String(d.getFullYear()).slice(2,4)) + ", " + d.getHours() + ":" + d.getMinutes()
       };
-      this.setNewNotification(newNotification);
       // update the notification rules
-      let box = await this.getBox(res.data.box, headers);
+      let box = await this.getBox(res.data.box, headers) as {
+        sensors: Array<any>,
+        name: string,
+        exposure: string,
+        updatedAt: string
+      };
       res.data = {
         ...res.data,
-        // @ts-ignore
         boxName: box.name,
-        // @ts-ignore
         boxExposure: box.exposure,
-        // @ts-ignore //TODO: a notificationRule could theoretically have more than one sensor, but Im not sure if we care about that...
+        //TODO: a notificationRule could theoretically have more than one sensor, but Im not sure if we care about that...
         sensorName: box.sensors.find(sensor => sensor._id == res.data.sensors[0]).title,
-        // @ts-ignore
         boxDate: box.updatedAt,
       }
       this.notificationsStore.update(state => ({
@@ -278,29 +273,22 @@ export class NotificationsService {
         ruleB: ruleA._id,
         timeText: d.getDate() + "." + (d.getMonth()+1) + "." + (String(d.getFullYear()).slice(2,4)) + ", " + d.getHours() + ":" + d.getMinutes()
       };
-      this.setNewNotification(newNotification);
       // update the notification rules
       res.data = {
         ...res.data,
         boxWholeA: ruleA.boxWhole,
-        // @ts-ignore // TODO: redundant
         boxNameA: ruleA.boxWhole.name,
-        // @ts-ignore
         boxExposureA: ruleA.boxWhole.exposure,
-        // @ts-ignore //TODO: a notificationRule could theoretically have more than one sensor, but Im not sure if we care about that...
+        //TODO: a notificationRule could theoretically have more than one sensor, but Im not sure if we care about that...
         sensorNameA: ruleA.sensorWhole.title,
         sensorWholeA: ruleA.sensorWhole,
-        // @ts-ignore
         boxDateA: ruleA.boxWhole.updatedAt,
         boxWholeB: ruleB.boxWhole,
-        // @ts-ignore // TODO: redundant
         boxNameB: ruleB.boxWhole.name,
-        // @ts-ignore
         boxExposureB: ruleB.boxWhole.exposure,
-        // @ts-ignore //TODO: a notificationRule could theoretically have more than one sensor, but Im not sure if we care about that...
+        //TODO: a notificationRule could theoretically have more than one sensor, but Im not sure if we care about that...
         sensorNameB: ruleB.sensorWhole.title,
         sensorWholeB: ruleB.sensorWhole,
-        // @ts-ignore
         boxDateB: ruleB.boxWhole.updatedAt,
       }
       this.notificationsStore.update(state => ({
@@ -336,34 +324,27 @@ export class NotificationsService {
       res.data = {
         ...res.data,
         boxWholeA: ruleA.boxWhole,
-        // @ts-ignore // TODO: redundant
         boxNameA: ruleA.boxWhole.name,
-        // @ts-ignore
         boxExposureA: ruleA.boxWhole.exposure,
-        // @ts-ignore //TODO: a notificationRule could theoretically have more than one sensor, but Im not sure if we care about that...
         sensorNameA: ruleA.sensorWhole.title,
         sensorWholeA: ruleA.sensorWhole,
-        // @ts-ignore
         boxDateA: ruleA.boxWhole.updatedAt,
         boxWholeB: ruleB.boxWhole,
-        // @ts-ignore // TODO: redundant
         boxNameB: ruleB.boxWhole.name,
-        // @ts-ignore
         boxExposureB: ruleB.boxWhole.exposure,
-        // @ts-ignore //TODO: a notificationRule could theoretically have more than one sensor, but Im not sure if we care about that...
         sensorNameB: ruleB.sensorWhole.title,
         sensorWholeB: ruleB.sensorWhole,
-        // @ts-ignore
         boxDateB: ruleB.boxWhole.updatedAt,
       }
-      //@ts-ignore
-      let currentConnectors = this.notificationsStore.store._value.state.notificationConnectors;
-      let indexOfChanged = currentConnectors.findIndex(x => x._id === res.data._id);
-      if (indexOfChanged >= 0) currentConnectors[indexOfChanged] = res.data;
-      this.notificationsStore.update(state => ({
-        ...state,
-        notificationConnectors: currentConnectors
-      }));
+      this.notificationsStore.update(state => {
+        let currentConnectors = state.notificationConnectors;
+        let indexOfChanged = currentConnectors.findIndex(x => x._id === res.data._id);
+        if (indexOfChanged >= 0) currentConnectors[indexOfChanged] = res.data;
+        return {
+          ...state,
+          notificationConnectors: currentConnectors
+        }
+      });
     });
   }
 
@@ -375,14 +356,15 @@ export class NotificationsService {
     let headers = new HttpHeaders();
     headers = headers.append('Authorization', 'Bearer '+window.localStorage.getItem('sb_accesstoken'));
     this.http.delete(`${environment.api_url}/notification/notificationRule/connect/`+connectorId, {headers: headers}).subscribe((res:any) => {
-      //@ts-ignore
-      let currentConnectors = this.notificationsStore.store._value.state.notificationConnectors;
-      let indexOfDeleted = currentConnectors.findIndex(x => x._id === res.data._id);
-      if (indexOfDeleted >= 0) currentConnectors.splice(indexOfDeleted, 1);;
-      this.notificationsStore.update(state => ({
-        ...state,
-        notificationRules: currentConnectors
-      }));
+      this.notificationsStore.update(state => {
+        let currentConnectors = state.notificationConnectors;
+        let indexOfDeleted = currentConnectors.findIndex(x => x._id === res.data._id);
+        if (indexOfDeleted >= 0) currentConnectors.splice(indexOfDeleted, 1);
+        return {
+          ...state,
+          notificationRules: currentConnectors
+        }
+      });
     });
   }
 
@@ -391,26 +373,29 @@ export class NotificationsService {
     headers = headers.append('Authorization', 'Bearer '+window.localStorage.getItem('sb_accesstoken'));
     this.http.put(`${environment.api_url}/notification/notificationRule/`+params.notificationRuleId, params, {headers: headers}).subscribe(async (res:any) => {
       // update the notification rules
-      let box = await this.getBox(res.data.box, headers);
+      let box = await this.getBox(res.data.box, headers) as {
+        sensors: Array<any>,
+        name: string,
+        exposure: string,
+        updatedAt: string
+      };
       res.data = {
         ...res.data,
-        // @ts-ignore
         boxName: box.name,
-        // @ts-ignore
-        boxExposure: box.exposure,
-        // @ts-ignore //TODO: a notificationRule could theoretically have more than one sensor, but Im not sure if we care about that...
+        boxExposure: box.exposure, 
+        //TODO: a notificationRule could theoretically have more than one sensor, but Im not sure if we care about that...
         sensorName: box.sensors.find(sensor => sensor._id == res.data.sensors[0]).title,
-        // @ts-ignore
         boxDate: box.updatedAt,
       }
-      //@ts-ignore
-      let currentRules = this.notificationsStore.store._value.state.notificationRules;
-      let indexOfChanged = currentRules.findIndex(x => x._id === res.data._id);
-      if (indexOfChanged >= 0) currentRules[indexOfChanged] = res.data;
-      this.notificationsStore.update(state => ({
-        ...state,
-        notificationRules: currentRules
-      }));
+      this.notificationsStore.update(state => {
+        let currentRules = state.notificationRules;
+        let indexOfChanged = currentRules.findIndex(x => x._id === res.data._id);
+        if (indexOfChanged >= 0) currentRules[indexOfChanged] = res.data;
+        return {
+          ...state,
+          notificationRules: currentRules
+        }
+      });
     });
   }
 
@@ -418,23 +403,16 @@ export class NotificationsService {
     let headers = new HttpHeaders();
     headers = headers.append('Authorization', 'Bearer '+window.localStorage.getItem('sb_accesstoken'));
     this.http.delete(`${environment.api_url}/notification/notificationRule/`+notificationRuleId, {headers: headers}).subscribe((res:any) => {
-      //@ts-ignore
-      let currentRules = this.notificationsStore.store._value.state.notificationRules;
-      let indexOfDeleted = currentRules.findIndex(x => x._id === res.data._id);
-      if (indexOfDeleted >= 0) currentRules.splice(indexOfDeleted, 1);;
-      this.notificationsStore.update(state => ({
-        ...state,
-        notificationRules: currentRules
-      }));
+      this.notificationsStore.update(state => {
+        let currentRules = state.notificationRules;
+        let indexOfDeleted = currentRules.findIndex(x => x._id === res.data._id);
+        if (indexOfDeleted >= 0) currentRules.splice(indexOfDeleted, 1);
+        return {
+          ...state,
+          notificationRules: currentRules
+        }
+      });
     });
-  }
-
-  // this will be shown in the popup
-  setNewNotification(newNotification) {
-    this.notificationsStore.update(state => ({
-      ...state,
-      newNotification: newNotification
-    }))
   }
 
   getBox(id, headers){
@@ -454,9 +432,7 @@ export class NotificationsService {
     headers = headers.append('Authorization', 'Bearer '+window.localStorage.getItem('sb_accesstoken'));
 
     let connectws = () => {
-      // TODO: websocket should be a variable of this class. Everytime this message is called it should only update the subscriptions and not create a new websocket
-      // TODO: The url of the websocket should go into the configuration file
-      this.websocket = new WebSocket('ws://localhost:12345/')
+      this.websocket = new WebSocket(environment.websocket_url)
       this.websocket.onopen = (evt) => {
 
         //@ts-ignore
@@ -473,10 +449,14 @@ export class NotificationsService {
       this.websocket.onmessage = async (evt) => {
         const message = JSON.parse(evt.data)
         if (!message.resultA) {
-          let box = await this.getBox(message.rule.box, headers);
+          let box = await this.getBox(message.rule.box, headers) as {
+            sensors: Array<any>,
+            name: string,
+            exposure: string,
+            updatedAt: string
+          };
           let sensors = [];
             for ( let i = 0; i < message.rule.sensors.length; i++) {
-              // @ts-ignore
               sensors.push(box.sensors.find(sensor => sensor._id == message.rule.sensors[i]))
             }
           let notification = {
@@ -489,7 +469,6 @@ export class NotificationsService {
             activationThreshold: message.rule.activationThreshold,
             ruleName: message.rule.name,
             box: box,
-            // @ts-ignore
             sensors: sensors
           }
           this.notificationsStore.update(state => ({
@@ -498,17 +477,25 @@ export class NotificationsService {
             notifications: (typeof state.notifications != "undefined") ? [notification].concat(state.notifications) : [notification]
           }));
         } else {
-          let boxA = await this.getBox(message.resultA.rule.box, headers);
+          let boxA = await this.getBox(message.resultA.rule.box, headers) as {
+            sensors: Array<any>,
+            name: string,
+            exposure: string,
+            updatedAt: string
+          };
           let sensorsA = [];
-          for ( let i = 0; i < message.resultA.rule.sensors.length; i++) {
-            // @ts-ignore
+          for ( let i = 0; i < message.resultA.rule.sensors.length; i++) {            
             sensorsA.push(boxA.sensors.find(sensor => sensor._id == message.resultA.rule.sensors[i]))
           }
-          let boxB = await this.getBox(message.resultB.rule.box, headers);
+          let boxB = await this.getBox(message.resultB.rule.box, headers) as {
+            sensors: Array<any>,
+            name: string,
+            exposure: string,
+            updatedAt: string
+          };
           let sensorsB = [];
           for ( let i = 0; i < message.resultB.rule.sensors.length; i++) {
-            // @ts-ignore
-            sensorsB.push(boxA.sensors.find(sensor => sensor._id == message.resultB.rule.sensors[i]))
+            sensorsB.push(boxB.sensors.find(sensor => sensor._id == message.resultB.rule.sensors[i]))
           }
           let notification = {
             notificationRule: message.connectorID,

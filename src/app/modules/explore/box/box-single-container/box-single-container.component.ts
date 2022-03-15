@@ -145,10 +145,38 @@ export class BoxSingleContainerComponent implements OnInit {
   }
 
   closeBox(){
-    this.router.navigate([''],    {
-      relativeTo: this.activatedRoute,
-      queryParamsHandling: 'merge'
-    });
+    // the goal here is to close the box container but keep the outlets
+    // its a bit hacky because angular does not support this yet (I think?)
+    const outletRoutes = /\(([^)]+)\)/.exec(this.router.url)
+    if (outletRoutes && outletRoutes[1]) {
+      let outletsData = {outlets: {}};
+      const outlets = outletRoutes[1].split('//');
+      let names = [];
+      outlets.forEach(outlet => {
+        // split by : to get the name of the outlet and the path separated
+        const splitOutlet = outlet.split(":");
+        const name = splitOutlet[0];
+        names.push(name);
+        const path = splitOutlet[1];
+        outletsData.outlets[name] = path;
+      });
+      let tree = this.router.createUrlTree(['', outletsData], {
+        relativeTo: this.activatedRoute,
+        queryParamsHandling: 'merge'
+      });
+      let children = {};
+      names.forEach((name) => {
+        children[name] = tree.root.children[name];
+      })
+      tree.root.children = children;
+      this.router.navigateByUrl(tree);
+    // if there are no outlets just do the normal procedure
+    } else {
+      this.router.navigate([''],    {
+        relativeTo: this.activatedRoute,
+        queryParamsHandling: 'merge'
+      })
+    }
   }
 
   changeScrollDivWidth(width){

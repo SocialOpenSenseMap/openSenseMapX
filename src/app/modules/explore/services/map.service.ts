@@ -103,9 +103,8 @@ export class MapService {
 
   // fetch the data and add the sources when its done
   fetchData(url){
-    this.http.get(url).subscribe(res => {
+    this.http.get(url).subscribe((res: Array<any>) => {
       let mapData = {type:"FeatureCollection",features:[]};
-      // @ts-ignore
       for(let i = 0; i < res.length; i++) {
         let box = res[i];
         let feature = {"type":"Feature",
