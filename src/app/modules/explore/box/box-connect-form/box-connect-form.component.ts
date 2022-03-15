@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input, OnInit, ChangeDetectorRef } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnInit, ChangeDetectorRef, Output, EventEmitter } from '@angular/core';
 import { Observable, Subscription } from 'rxjs';
 import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
 import { NotificationsService } from 'src/app/models/notifications/state/notifications.service';
@@ -24,6 +24,10 @@ export class BoxConnectFormComponent implements OnInit {
   textFormConnect;
   showAddConnect: boolean;
   subscription: Subscription;
+  clickEventSubscription: Subscription;
+  connectorOptions = ["and", "or", "xor"];
+  connector;
+
 
   constructor(
     private fb: FormBuilder,
@@ -35,9 +39,45 @@ export class BoxConnectFormComponent implements OnInit {
     private changeDetector: ChangeDetectorRef,
     private uiService: UiService) {
       this.subscription = this.uiService.onToggle().subscribe((value) => (this.showAddConnect = value));
+      this.clickEventSubscription = this.uiService.getClickEvent().subscribe(()=> {this.sendNotificationB()})
      }
 
-  ngOnInit() {
+  ngOnInit() { 
+  }
+
+  async getConnector(){
+    if (this.showAddConnect){
+      let _e = (document.getElementById("form-connector-connect")) as HTMLSelectElement;
+      let _sel = _e.selectedIndex;
+      let _opt = _e.options[_sel];
+      this.connector = (<HTMLSelectElement><unknown>_opt).textContent;
+    }
+  }
+
+  async sendNotificationB(){
+
+    // get input elements of the form B
+    let sensorsB = document.getElementById("form-sensors-connect");
+    let operatorsB = document.getElementById("form-operators-connect");
+    let thresholdsB = document.getElementById("form-thresholds-connect");
+
+    if (this.showAddConnect && sensorsB && operatorsB && thresholdsB) {
+      // create a notification rule for B
+      this.notificationsService.createNotificationRule({
+        // @ts-ignore
+        sensors: [sensorsB.value],
+        box: this.activeBox._id,
+        name: "bRule",
+        // @ts-ignore
+        activationThreshold: thresholdsB.value,
+        // @ts-ignore
+        activationOperator: operatorsB.value,
+        activationTrigger: "any",
+        active: true,
+        notificationChannel: [],
+        // @ts-ignore
+      }, this.activeBox.name, sensorsB.options[sensorsB.selectedIndex].text)
+    }
   }
 
   selectedConnect(){

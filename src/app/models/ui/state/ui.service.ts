@@ -17,10 +17,19 @@ export class UiService {
 
   private showAddConnect: boolean = false
   private subject = new Subject<any>();
+  private subjectB = new Subject<any>();
 
   constructor(
     private uiStore: UiStore, 
     private http: HttpClient) {
+  }
+
+  sendClickEvent(){
+    this.subjectB.next();
+  }
+
+  getClickEvent(): Observable<any>{
+    return this.subjectB.asObservable()
   }
 
   toggleAddConnect(): void {

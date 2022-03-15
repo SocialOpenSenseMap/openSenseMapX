@@ -7,9 +7,7 @@
                 <label><p>Connector:</p></label>
                 <select name="connector" class="input is-small" id="form-connector-connect" required>
                     <option value= "" disabled selected hidden>Connector</option>
-                    <option value="and">and</option>
-                    <option value="or">or</option>
-                    <option value="xor">xor</option>
+                    <option *ngFor="let option of connectorOptions"value="connector">{{ option }}</option>
                 </select>
             </div>   
             <div action="/action_page.php">
