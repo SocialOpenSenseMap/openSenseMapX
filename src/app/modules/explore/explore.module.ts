@@ -33,11 +33,12 @@ import { LegendEditContainerComponent } from './legend/legend-edit-container/leg
 import { LegendEditComponent } from './legend/legend-edit/legend-edit.component';
 import { BoxFollowComponent } from './box/box-follow/box-follow.component';
 import { BoxFollowContainerComponent } from './box/box-follow-container/box-follow-container.component';
-import { BoxThresholdComponent } from './box/box-threshold/box-threshold.component';
-import { BoxThresholdItemComponent } from './box/box-threshold-item/box-threshold-item.component';
+import { BoxConnectBtnComponent } from './box/box-connect-btn/box-connect-btn.component';
+import { BoxConnectFormComponent } from './box/box-connect-form/box-connect-form.component';
+//import { BoxConnectFormContainerComponent } from './box/box-connect-form-container/box-connect-form-container.component';
 
 @NgModule({
-  declarations: [BaseMapContainerComponent, BaseMapComponent, BoxContainerComponent, BoxValuesComponent, BoxChartComponent, LegendContainerComponent, LegendComponent, TimeSliderContainerComponent, TimeSliderComponent, OsemLineChartComponent, OsemLineSeriesComponent, BoxSingleContainerComponent, BoxSingleValuesComponent, BoxCompareContainerComponent, BoxCompareValuesComponent, PopupComponent, PopupContainerComponent, MapOptionsContainerComponent, MapOptionsComponent, ChartDatepickerComponent, MapLoadingComponent, LegendEditContainerComponent, LegendEditComponent, BoxFollowComponent, BoxFollowContainerComponent, BoxThresholdComponent, BoxThresholdItemComponent],
+  declarations: [BaseMapContainerComponent, BaseMapComponent, BoxContainerComponent, BoxValuesComponent, BoxChartComponent, LegendContainerComponent, LegendComponent, TimeSliderContainerComponent, TimeSliderComponent, OsemLineChartComponent, OsemLineSeriesComponent, BoxSingleContainerComponent, BoxSingleValuesComponent, BoxCompareContainerComponent, BoxCompareValuesComponent, PopupComponent, PopupContainerComponent, MapOptionsContainerComponent, MapOptionsComponent, ChartDatepickerComponent, MapLoadingComponent, LegendEditContainerComponent, LegendEditComponent, BoxFollowComponent, BoxFollowContainerComponent, BoxConnectBtnComponent, BoxConnectFormComponent],
   imports: [
     CommonModule,
     SharedModule,

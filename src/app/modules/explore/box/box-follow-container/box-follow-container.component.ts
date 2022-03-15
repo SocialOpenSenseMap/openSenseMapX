@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 import { UiQuery } from 'src/app/models/ui/state/ui.query';
-import { UiService } from 'src/app/models/ui/state/ui.service';
 import { BoxService } from 'src/app/models/box/state/box.service';
 import { BoxQuery } from 'src/app/models/box/state/box.query';
 import { SessionQuery } from 'src/app/models/session/state/session.query';
@@ -22,7 +21,6 @@ export class BoxFollowContainerComponent implements OnInit {
 
   constructor(
     private uiQuery: UiQuery, 
-    private uiSerivce: UiService,
     private activatedRoute: ActivatedRoute,
     private boxService: BoxService,
     private boxQuery: BoxQuery,
@@ -36,5 +34,4 @@ export class BoxFollowContainerComponent implements OnInit {
       this.activeBox$ = this.boxQuery.selectActiveWithSensorAndUI();
     });
   }
-
 }

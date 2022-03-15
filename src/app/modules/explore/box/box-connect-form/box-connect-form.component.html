@@ -1,0 +1,37 @@
+<div *ngIf="activeBox">
+<div *ngIf="showAddConnect">
+    <div class="osem-padding">
+        <p class="title-box-follow">Connect two sensors</p>
+        <form id="follow-box-form-connect">
+            <div action="/action_page.php">
+                <label><p>Connector:</p></label>
+                <select name="connector" class="input is-small" id="form-connector-connect" required>
+                    <option value= "" disabled selected hidden>Connector</option>
+                    <option *ngFor="let option of connectorOptions"value="connector">{{ option }}</option>
+                </select>
+            </div>   
+            <div action="/action_page.php">
+                <label><p>Sensor:</p></label>
+                <select name="sensors" class="input is-small" id="form-sensors-connect" (change)="selectedConnect()" required>
+                    <option value= "" disabled selected hidden>Sensor</option>
+                    <option *ngFor="let sensor of activeBox.sensors" [value]="sensor._id">{{ sensor.title }}</option>
+                </select>
+            </div>    
+            <div action="/action_page.php">
+                <label><p>Operator:</p></label>
+                <select name="operator" class="input is-small" id="form-operators-connect" required>
+                    <option value= "" disabled selected hidden>Operator</option>
+                    <option value="equal">equal</option>
+                    <option value="over">over</option>
+                    <option value="under">under</option>
+                </select>
+            </div>
+            <div class="control">
+                <label>Threshold:</label>
+                <input class="input is-small" type="number" placeholder={{textFormConnect}} id="form-thresholds-connect">
+            </div>
+    </form>
+    </div>
+</div>    
+</div>
+
