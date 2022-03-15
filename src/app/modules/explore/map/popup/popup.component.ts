@@ -100,9 +100,7 @@ export class PopupComponent implements OnInit {
         queryParamsHandling: 'merge'
       }
     ); 
-
     this.closePopup();
-    
   }
 
 }

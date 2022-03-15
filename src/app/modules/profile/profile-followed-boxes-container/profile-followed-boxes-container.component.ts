@@ -14,6 +14,7 @@ import { SessionQuery } from 'src/app/models/session/state/session.query';
 export class ProfileFollowedBoxesContainerComponent implements AfterViewInit, OnInit {
     
     notificationRules$ = this.notificationsQuery.notificationRules$;
+    notificationConnectors$ = this.notificationsQuery.notificationConnectors$
     user$ = this.sessionQuery.user$;
 
     constructor(private notificationsQuery: NotificationsQuery, private notificationsService: NotificationsService, private sessionQuery: SessionQuery) { }

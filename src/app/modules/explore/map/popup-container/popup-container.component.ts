@@ -40,7 +40,6 @@ export class PopupContainerComponent implements OnInit {
   }
 
   closePopup(){
-    //this.uiService.setCluster(null);
     this.mapService.mouseLeavePopup();
   }
 

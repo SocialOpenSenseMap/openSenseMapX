@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy,Component, OnInit, Input,ChangeDetectorRef, AfterViewInit, OnChanges } from '@angular/core';
+import { ChangeDetectionStrategy,Component, OnInit, Input,ChangeDetectorRef, AfterViewInit, OnChanges , Pipe, PipeTransform } from '@angular/core';
 import { NotificationsQuery } from 'src/app/models/notifications/state/notifications.query';
 import { NotificationsService } from 'src/app/models/notifications/state/notifications.service';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -14,23 +14,35 @@ import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http
 export class ProfileFollowedBoxesComponent implements OnInit {
     
   @Input() notificationRules;
-  @Input () user;
+  @Input() user;
   @Input() box;
+  openCoverages: boolean;
+  indexSelectedCoverage: number;
 
   constructor(
     private notificationsQuery: NotificationsQuery, 
     private notificationsService: NotificationsService, 
     public router: Router,
     private changeDetector: ChangeDetectorRef,
-    private http: HttpClient) { }
+    private http: HttpClient,
+    private activatedRoute: ActivatedRoute,
+  ) { }
 
   dataSource: any [] = [];
-  editField: string;
   idRule: string;
   confirm=false;
   create=false;
+  connectRule=false;
   edition: any [] = [];
   unit;
+  order: string = 'boxName';
+  public searchText : string;
+  public customerData : any;
+
+  selectItemCoverages(index: number) {
+    this.openCoverages = this.openCoverages && this.indexSelectedCoverage === index ? false : true;
+    this.indexSelectedCoverage = index;
+  }
 
   //Function for button to edit notification rule
   editableRule(index:number){
@@ -40,19 +52,25 @@ export class ProfileFollowedBoxesComponent implements OnInit {
     }
   }
 
-  async updateValue(i:number, id:string, boxSensors: any, boxBox:string , boxName: string, boxActivationTrigger:string, boxActive: boolean, boxUser: string , boxNotCha:any, event: any) {
+  async updateValue(i:number, id:string, boxSensors: any, boxBox:string , boxName: string, boxActivationTrigger:string, boxActive: boolean, boxUser: string , event: any) {
     
     let e = (document.getElementById('sel-operators'+i)) as HTMLSelectElement;
     let operators = e.options[e.selectedIndex].text;
     let thresholds = document.getElementById('form-thresholds'+i);
-    let f = document.getElementById('check-email'+i); //TODO: Getting notification by email option
+    let f = document.getElementById('check-email'+i)
+    let g = document.getElementById('check-active'+i);
     let notificationChannels = [];
     // @ts-ignore
-    if(f.checked) {
+    if(document.getElementById('check-email'+i).checked) {
       notificationChannels.push({
           "channel": "email", 
           "email": this.user.email
       })
+    }
+    boxActive=false;
+    // @ts-ignore
+    if(document.getElementById('check-active'+i).checked){
+      boxActive=true;
     }
     this.notificationsService.updateNotificationRule({
       notificationRuleId:id,
@@ -94,15 +112,16 @@ export class ProfileFollowedBoxesComponent implements OnInit {
     }
   }
 
-  //Functions for deletetion of notification rule
+  //Functions for deletion of notification rule
 
-  selectItem(id:string) {
+  deleteItem(id:string) {
     this.confirm = true;
     this.idRule=id;
   }
 
   cancel() { 
     this.confirm=false;
+    this.connectRule = false;
   }
 
   remove(id:string) {
@@ -117,16 +136,38 @@ export class ProfileFollowedBoxesComponent implements OnInit {
   }
 
   boxFollow(id:string){
-    this.router.navigateByUrl('/(modal:follow-box)?boxId='+id)
+    this.router.navigate(
+      [{outlets: {modal: 'follow-box', sidebar :null}}],
+      {
+        queryParams: { boxId: id },
+        queryParamsHandling: 'merge'
+      }
+    )
   }
 
+  //Functions connect rule
+  
+  connectToRule(boxId:string, ruleId:string){
+    console.log(boxId);
+    this.router.navigate(
+      [{outlets: {modal: 'connect-rule', sidebar :null}}],
+      {
+        queryParams: { boxId: boxId , ruleId: ruleId},
+        queryParamsHandling: 'merge'
+      }
+    )
+  }
+
+  connectItem(id:string) {
+    this.connectRule = true;
+    this.idRule=id;
+  }
 
   async ngOnChanges(changes) {
     if(changes.notificationRules && typeof changes.notificationRules.currentValue != "undefined") {
       this.dataSource = changes.notificationRules.currentValue;
       this.unit = this.getUnit(this.dataSource);
     }
-    // @ts-ignore
   }
 
   async ngOnInit(){

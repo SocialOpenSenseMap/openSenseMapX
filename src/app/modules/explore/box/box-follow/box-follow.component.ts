@@ -1,19 +1,16 @@
-import { ChangeDetectionStrategy, Component, Input, OnInit, ChangeDetectorRef } from '@angular/core';
-import { Observable } from 'rxjs';
+import { ChangeDetectionStrategy, Component, Input, Output, OnInit, ChangeDetectorRef, EventEmitter } from '@angular/core';
+import { Observable, Subscription, fromEvent } from 'rxjs';
 import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
 import { NotificationsService } from 'src/app/models/notifications/state/notifications.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BoxQuery } from 'src/app/models/box/state/box.query';
 import { BoxService } from 'src/app/models/box/state/box.service';
-import { SensorService } from 'src/app/models/sensor/state/sensor.service';
-import { HttpErrorResponse } from '@angular/common/http';
-import { sensorIcons } from 'src/app/helper/sensorIcons';
+import { UiService } from 'src/app/models/ui/state/ui.service';
 
 @Component({
   selector: 'osem-box-follow',
   templateUrl: './box-follow.component.html',
   styleUrls: ['./box-follow.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class BoxFollowComponent implements OnInit {
 
@@ -23,7 +20,10 @@ export class BoxFollowComponent implements OnInit {
   @Input() areNotificationsLoaded;
   sensorUnit;
   textForm;
-  messageToUser;
+  showAddConnect: boolean = false;
+  subscription: Subscription;
+  clickObservable: Observable<Event> = fromEvent(document,'click');
+  aRule;
 
   constructor(
     private fb: FormBuilder,
@@ -32,11 +32,13 @@ export class BoxFollowComponent implements OnInit {
     private boxQuery: BoxQuery,
     public notificationsService: NotificationsService,
     public router: Router,
-    private changeDetector: ChangeDetectorRef) {}
+    private changeDetector: ChangeDetectorRef,
+    private uiService: UiService) {
+      this.subscription = this.uiService.onToggle().subscribe((value) => (this.showAddConnect = value));
+    }
 
-
-  async ngOnInit() {
-    this.notificationsService.messageToUser = "message appers here";
+  ngOnInit() {
+    this.observeClick();
   }
 
   async ngOnChanges(changes) {
@@ -45,19 +47,19 @@ export class BoxFollowComponent implements OnInit {
     }
   }
 
-  sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-  }
-
   async sendNotification() {
-    // get input elements of the form
-    let sensors = (<HTMLSelectElement>document.getElementById("form-sensors"));
-    let operators = (<HTMLSelectElement>document.getElementById("form-operators"));
-    let thresholds = (<HTMLInputElement>document.getElementById("form-thresholds"));
-    let email = (<HTMLInputElement>document.getElementById("form-email"));
-    // check if the input elements have been found and if they have values
-    if (sensors && operators && thresholds && email
-      && sensors.value != "" && operators.value != "" && thresholds.value != "" && email.value != "") {
+
+    if (this.showAddConnect){
+      this.uiService.sendClickEvent();
+    }
+    
+    // get input elements of the form A
+    let sensors = document.getElementById("form-sensors");
+    let operators = document.getElementById("form-operators");
+    let thresholds = document.getElementById("form-thresholds");
+    let email = document.getElementById("form-email");
+
+    if (sensors && operators && thresholds && email) {
       let notificationChannels = [];
       if(email.checked) {
         notificationChannels.push({
@@ -65,8 +67,9 @@ export class BoxFollowComponent implements OnInit {
             "email": this.user.email
         })
       }
-      // create a notification rule
-      this.notificationsService.createNotificationRule({
+      // create a notification rule for A
+      this.aRule = this.notificationsService.createNotificationRule({
+        // @ts-ignore
         sensors: [sensors.value],
         box: this.activeBox._id,
         name: "aRule",
@@ -77,8 +80,7 @@ export class BoxFollowComponent implements OnInit {
         notificationChannel: notificationChannels
       }, this.activeBox.name, sensors.options[sensors.selectedIndex].text)
     }
-    this.sleep(500);
-    this.changeDetector.detectChanges();
+    this.changeDetector.detectChanges(); 
   }
 
   selected(){
@@ -94,9 +96,24 @@ export class BoxFollowComponent implements OnInit {
       }
     }
   }
+
   configCenter(){
     this.router.navigate(
       [{ outlets: { sidebar: ['m','profile','fbox'] }}]
     )
   }
+
+  toggleAddConnect(){
+    this.uiService.toggleAddConnect();
+  }
+
+  observeClick() {
+    this.clickObservable.subscribe(() => { if (this.notificationsService.messageAppears == true) { 
+      this.notificationsService.messageAppears = false;
+      }
+  })}
 }
+
+
+
+  
