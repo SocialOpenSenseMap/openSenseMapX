@@ -54,6 +54,10 @@ export class BoxConnectFormComponent implements OnInit {
     }
   }
 
+  async connectRules(){
+    
+  }
+
   async sendNotificationB(){
 
     // get input elements of the form B
@@ -64,18 +68,14 @@ export class BoxConnectFormComponent implements OnInit {
     if (this.showAddConnect && sensorsB && operatorsB && thresholdsB) {
       // create a notification rule for B
       this.notificationsService.createNotificationRule({
-        // @ts-ignore
         sensors: [sensorsB.value],
         box: this.activeBox._id,
         name: "bRule",
-        // @ts-ignore
         activationThreshold: thresholdsB.value,
-        // @ts-ignore
         activationOperator: operatorsB.value,
         activationTrigger: "any",
         active: true,
         notificationChannel: [],
-        // @ts-ignore
       }, this.activeBox.name, sensorsB.options[sensorsB.selectedIndex].text)
     }
   }

@@ -63,10 +63,11 @@
             <div *ngFor="let notificationRule of notificationRules">
                 <div *ngIf="notificationRule.boxName==activeBox.name">
                     <div *ngFor="let sensor of activeBox.sensors">
-                        <div *ngIf="sensor.title==notificationRule.sensorName" class="notification">
-                            <div>{{ notificationRule.sensorName }} {{ notificationRule.activationOperator }} {{
-                                notificationRule.activationThreshold }}{{ sensor.unit }}</div>
-                        </div>
+                        <div *ngIf="notificationRule.name=='aRule'">
+                            <div *ngIf="sensor.title==notificationRule.sensorName" class="notification">
+                                <div>{{ notificationRule.sensorName }} {{ notificationRule.activationOperator }} {{ notificationRule.activationThreshold }}{{ sensor.unit }}</div>
+                            </div> 
+                        </div>  
                     </div>
                 </div>
             </div>
