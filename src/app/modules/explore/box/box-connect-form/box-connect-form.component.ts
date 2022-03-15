@@ -20,6 +20,7 @@ export class BoxConnectFormComponent implements OnInit {
   @Input() user;
   @Input() notificationRules;
   @Input() areNotificationsLoaded;
+  @Input() aRule;
   sensorUnitConnect;
   textFormConnect;
   showAddConnect: boolean;
@@ -27,6 +28,7 @@ export class BoxConnectFormComponent implements OnInit {
   clickEventSubscription: Subscription;
   connectorOptions = ["and", "or", "xor"];
   connector;
+  bRule;
 
 
   constructor(
@@ -45,21 +47,7 @@ export class BoxConnectFormComponent implements OnInit {
   ngOnInit() { 
   }
 
-  async getConnector(){
-    if (this.showAddConnect){
-      let _e = (document.getElementById("form-connector-connect")) as HTMLSelectElement;
-      let _sel = _e.selectedIndex;
-      let _opt = _e.options[_sel];
-      this.connector = (<HTMLSelectElement><unknown>_opt).textContent;
-    }
-  }
-
-  async connectRules(){
-    
-  }
-
   async sendNotificationB(){
-
     // get input elements of the form B
     let sensorsB = document.getElementById("form-sensors-connect");
     let operatorsB = document.getElementById("form-operators-connect");
@@ -67,7 +55,7 @@ export class BoxConnectFormComponent implements OnInit {
 
     if (this.showAddConnect && sensorsB && operatorsB && thresholdsB) {
       // create a notification rule for B
-      this.notificationsService.createNotificationRule({
+      this.bRule = this.notificationsService.createNotificationRule({
         sensors: [sensorsB.value],
         box: this.activeBox._id,
         name: "bRule",
@@ -77,6 +65,13 @@ export class BoxConnectFormComponent implements OnInit {
         active: true,
         notificationChannel: [],
       }, this.activeBox.name, sensorsB.options[sensorsB.selectedIndex].text)
+      // get connector
+      let _e = (document.getElementById("form-connector-connect")) as HTMLSelectElement;
+      let _sel = _e.selectedIndex;
+      let _opt = _e.options[_sel];
+      this.connector = (<HTMLSelectElement><unknown>_opt).textContent;
+      // connect Rules
+      this.notificationsService.connectRules(this.aRule, this.bRule, this.connector)
     }
   }
 

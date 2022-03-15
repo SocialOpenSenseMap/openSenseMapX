@@ -23,6 +23,7 @@ export class BoxFollowComponent implements OnInit {
   showAddConnect: boolean = false;
   subscription: Subscription;
   clickObservable: Observable<Event> = fromEvent(document,'click');
+  aRule;
 
   constructor(
     private fb: FormBuilder,
@@ -67,7 +68,7 @@ export class BoxFollowComponent implements OnInit {
         })
       }
       // create a notification rule for A
-      this.notificationsService.createNotificationRule({
+      this.aRule = this.notificationsService.createNotificationRule({
         sensors: [sensors.value],
         box: this.activeBox._id,
         name: "aRule",
@@ -78,7 +79,7 @@ export class BoxFollowComponent implements OnInit {
         notificationChannel: notificationChannels
       }, this.activeBox.name, sensors.options[sensors.selectedIndex].text)
     }
-    this.changeDetector.detectChanges();   
+    this.changeDetector.detectChanges(); 
   }
 
   selected(){
