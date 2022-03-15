@@ -30,6 +30,7 @@
                         <option value="equal">equal</option>
                         <option value="over">over</option>
                         <option value="under">under</option>
+                        <option value="unusual">unusual</option>
                     </select>
                 </div>
 
@@ -64,11 +65,11 @@
             <div *ngFor="let notificationRule of notificationRules">
                 <div *ngIf="notificationRule.boxName==activeBox.name">
                     <div *ngFor="let sensor of activeBox.sensors">
-                        <div *ngIf="notificationRule.name=='aRule'">
-                            <div *ngIf="sensor.title==notificationRule.sensorName" class="notification">
-                                <div>{{ notificationRule.sensorName }} {{ notificationRule.activationOperator }} {{ notificationRule.activationThreshold }}{{ sensor.unit }}</div>
-                            </div> 
-                        </div>  
+                        <div *ngIf="sensor.title==notificationRule.sensorName" class="notification">
+                            <ng-container *ngIf="notificationRule.activationOperator=='unusual'; then unusualRule else normalRule"></ng-container>
+                            <ng-template #unusualRule>{{ notificationRule.sensorName }} is outside {{ notificationRule.activationThreshold }} times the standard deviation </ng-template>
+                            <ng-template #normalRule>{{ notificationRule.sensorName }} {{ notificationRule.activationOperator }} {{ notificationRule.activationThreshold }}{{ sensor.unit }}</ng-template>
+                        </div>   
                     </div>
                 </div>
             </div>

@@ -61,6 +61,7 @@ export class BoxFollowComponent implements OnInit {
 
     if (sensors && operators && thresholds && email) {
       let notificationChannels = [];
+      // @ts-ignore
       if(email.checked) {
         notificationChannels.push({
             "channel": "email", 
@@ -69,14 +70,18 @@ export class BoxFollowComponent implements OnInit {
       }
       // create a notification rule for A
       this.aRule = this.notificationsService.createNotificationRule({
+        // @ts-ignore
         sensors: [sensors.value],
         box: this.activeBox._id,
         name: "aRule",
+        // @ts-ignore
         activationThreshold: thresholds.value,
+        // @ts-ignore
         activationOperator: operators.value,
         activationTrigger: "any",
         active: true,
         notificationChannel: notificationChannels
+        // @ts-ignore
       }, this.activeBox.name, sensors.options[sensors.selectedIndex].text)
     }
     this.changeDetector.detectChanges(); 

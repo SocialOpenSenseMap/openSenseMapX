@@ -56,14 +56,18 @@ export class BoxConnectFormComponent implements OnInit {
     if (this.showAddConnect && sensorsB && operatorsB && thresholdsB) {
       // create a notification rule for B
       this.bRule = this.notificationsService.createNotificationRule({
+        // @ts-ignore
         sensors: [sensorsB.value],
         box: this.activeBox._id,
         name: "bRule",
+        // @ts-ignore
         activationThreshold: thresholdsB.value,
+        // @ts-ignore
         activationOperator: operatorsB.value,
         activationTrigger: "any",
         active: true,
         notificationChannel: [],
+        // @ts-ignore
       }, this.activeBox.name, sensorsB.options[sensorsB.selectedIndex].text)
       // get connector
       let _e = (document.getElementById("form-connector-connect")) as HTMLSelectElement;
@@ -71,9 +75,11 @@ export class BoxConnectFormComponent implements OnInit {
       let _opt = _e.options[_sel];
       this.connector = (<HTMLSelectElement><unknown>_opt).textContent;
       // connect Rules
-      this.notificationsService.connectRules(this.aRule, this.bRule, this.connector)
+      
     }
   }
+
+  // this.notificationsService.connectRules(this.aRule, this.bRule, this.connector)
 
   selectedConnect(){
     let e = (document.getElementById("form-sensors-connect")) as HTMLSelectElement;

@@ -57,7 +57,7 @@ export class ConnectRulesComponent implements OnInit {
     if(document.getElementById('check-active'+i).checked){
       active=true;
     }
-    this.notificationsService.updateConnector(id, ruleA, ruleB, operators, active)
+    this.notificationsService.updateConnector(id, ruleA, ruleB, operators)
   }
 
   sleep(ms) {
