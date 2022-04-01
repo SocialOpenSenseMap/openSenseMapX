@@ -146,18 +146,6 @@ export class ProfileFollowedBoxesComponent implements OnInit {
   }
 
   //Functions connect rule
-  
-  connectToRule(boxId:string, ruleId:string){
-    console.log(boxId);
-    this.router.navigate(
-      [{outlets: {modal: 'connect-rule', sidebar :null}}],
-      {
-        queryParams: { boxId: boxId , ruleId: ruleId},
-        queryParamsHandling: 'merge'
-      }
-    )
-  }
-
   connectItem(id:string) {
     this.connectRule = true;
     this.idRule=id;

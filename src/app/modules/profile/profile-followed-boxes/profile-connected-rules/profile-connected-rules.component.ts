@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy,Component, OnInit, Input,ChangeDetectorRef, Aft
 import { NotificationsQuery } from 'src/app/models/notifications/state/notifications.query';
 import { NotificationsService } from 'src/app/models/notifications/state/notifications.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'osem-profile-connected-rules',
@@ -22,7 +22,6 @@ export class ProfileConnectedRulesComponent implements OnInit {
     private notificationsService: NotificationsService, 
     public router: Router,
     private changeDetector: ChangeDetectorRef,
-    private http: HttpClient,
     private activatedRoute: ActivatedRoute
   ) { }
 
