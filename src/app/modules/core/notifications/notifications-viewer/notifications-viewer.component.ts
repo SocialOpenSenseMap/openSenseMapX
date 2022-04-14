@@ -29,13 +29,13 @@ export class NotificationsViewerComponent implements OnInit {
 
   async ngAfterViewInit() {
     await this.sleep(200)
-    //this.notificationsService.unreadFalse()
+    this.notificationsService.unreadFalse();
   }
 
   async ngOnChanges(changes) {
     if(changes.unread && typeof changes.unread.currentValue != "undefined" && changes.unread.currentValue != null) {
       await this.sleep(200)
-      //this.notificationsService.unreadFalse()
+      this.notificationsService.unreadFalse();
     }
   }
 

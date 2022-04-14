@@ -7,10 +7,9 @@
           Notification Rule triggered!
         </div>
         <div class="notification-text"> 
-          <b>{{ notification.sensors[0].title }}</b> is {{ notification.activationOperator }}
-          <div style="display: inline" *ngIf="notification.activationOperator!='unusual'">
-             <b>{{ notification.activationThreshold }} {{ notification.sensors[0].unit }}</b>
-          </div>.
+          <ng-container *ngIf="notification.activationOperator=='unusual'; then unusualNotification else normalNotification"></ng-container>
+          <ng-template #unusualNotification><b>{{ notification.sensors[0].title }}</b> is unusual.</ng-template>
+          <ng-template #normalNotification><b>{{ notification.sensors[0].title }}</b> is {{ notification.activationOperator }} <b>{{ notification.activationThreshold }} {{ notification.sensors[0].unit }}</b>.</ng-template>
         </div>
         <div class="notification-subtext">
           Sensor "{{ notification.sensors[0].title }}" of <a (click)="boxDetails(notification.box._id)">{{ notification.box.name }}</a> measured <b>{{ notification.notificationValue }} {{ notification.sensors[0].unit }}</b>.
@@ -24,27 +23,23 @@
         </div>
         <div class="notification-text"> 
           <div style="display: inline" *ngIf="notification.connectionOperator!='xor'">
-            <b>{{ notification.sensorsA[0].title }}</b> is {{ notification.activationOperatorA }}
-            <div style="display: inline" *ngIf="notification.activationOperatorB!='unusual'">
-              <b>{{ notification.activationThresholdA }} {{ notification.sensorsA[0].unit }}</b>
-            </div> 
+            <ng-container *ngIf="notification.activationOperator=='unusual'; then unusualNotificationA else normalNotificationA"></ng-container>
+            <ng-template #unusualNotificationA><b>{{ notification.sensorsA[0].title }}</b> is unusual.</ng-template>
+            <ng-template #normalNotificationA><b>{{ notification.sensorsA[0].title }}</b> is {{ notification.activationOperatorA }} <b>{{ notification.activationThresholdA }} {{ notification.sensorsA[0].unit }}</b>.</ng-template>
             {{ notification.connectionOperator }} 
-            <b>{{ notification.sensorsB[0].title }}</b> is {{ notification.activationOperatorB }}
-            <div style="display: inline" *ngIf="notification.activationOperatorB!='unusual'">
-              <b>{{ notification.activationThresholdB }} {{ notification.sensorsB[0].unit }}</b>
-            </div>.
+            <ng-container *ngIf="notification.activationOperator=='unusual'; then unusualNotificationB else normalNotificationB"></ng-container>
+            <ng-template #unusualNotificationB><b>{{ notification.sensorsB[0].title }}</b> is unusual.</ng-template>
+            <ng-template #normalNotificationB><b>{{ notification.sensorsB[0].title }}</b> is {{ notification.activationOperatorB }} <b>{{ notification.activationThresholdB }} {{ notification.sensorsB[0].unit }}</b>.</ng-template>
           </div> 
           <div style="display: inline" *ngIf="notification.connectionOperator=='xor'">
             Either 
-            <b>{{ notification.sensorsA[0].title }}</b> is {{ notification.activationOperatorA }}
-            <div style="display: inline" *ngIf="notification.activationOperatorA!='unusual'">
-              <b>{{ notification.activationThresholdA }} {{ notification.sensorsA[0].unit }}</b>
-            </div> 
+            <ng-container *ngIf="notification.activationOperator=='unusual'; then unusualNotificationAxor else normalNotificationAxor"></ng-container>
+            <ng-template #unusualNotificationAxor><b>{{ notification.sensorsA[0].title }}</b> is unusual.</ng-template>
+            <ng-template #normalNotificationAxor><b>{{ notification.sensorsA[0].title }}</b> is {{ notification.activationOperatorA }} <b>{{ notification.activationThresholdA }} {{ notification.sensorsA[0].unit }}</b>.</ng-template>
             or 
-            <b>{{ notification.sensorsB[0].title }}</b> is {{ notification.activationOperatorB }}
-            <div style="display: inline" *ngIf="notification.activationOperatorB!='unusual'">
-              <b>{{ notification.activationThresholdB }} {{ notification.sensorsB[0].unit }}</b>
-            </div>.
+            <ng-container *ngIf="notification.activationOperator=='unusual'; then unusualNotificationBxor else normalNotificationBxor"></ng-container>
+            <ng-template #unusualNotificationBxor><b>{{ notification.sensorsB[0].title }}</b> is unusual.</ng-template>
+            <ng-template #normalNotificationBxor><b>{{ notification.sensorsB[0].title }}</b> is {{ notification.activationOperatorB }} <b>{{ notification.activationThresholdB }} {{ notification.sensorsB[0].unit }}</b>.</ng-template>
           </div>
         </div>
         <div class="notification-subtext">
