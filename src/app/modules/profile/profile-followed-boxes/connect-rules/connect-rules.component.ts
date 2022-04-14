@@ -43,8 +43,7 @@ export class ConnectRulesComponent implements OnInit {
   }
 
   async ngOnChanges(changes) {
-    if (changes.user && typeof changes.user.currentValue != "undefined" && changes.user.currentValue != null) {
-      this.notificationsService.getRulesAndConnectors();
+    if (changes.notificationRules && typeof changes.notificationRules.currentValue != "undefined" && changes.notificationRules.currentValue != null) {
       this.dataSource = changes.notificationRules.currentValue;
     }
   }
@@ -57,7 +56,7 @@ export class ConnectRulesComponent implements OnInit {
     if(document.getElementById('check-active'+i).checked){
       active=true;
     }
-    this.notificationsService.updateConnector(id, ruleA, ruleB, operators)
+    this.notificationsService.updateConnector(id, ruleA, ruleB, operators, active)
   }
 
   sleep(ms) {
