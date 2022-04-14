@@ -39,7 +39,7 @@ export class ProfileConnectedRulesComponent implements OnInit {
     if(document.getElementById('check-active'+i).checked){
       active=true;
     }
-    this.notificationsService.updateConnector(id, ruleA, ruleB, operators)
+    this.notificationsService.updateConnector(id, ruleA, ruleB, operators, active)
   }
 
   //Functions for deletion of connection

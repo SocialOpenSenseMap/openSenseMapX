@@ -62,7 +62,7 @@ export class NotificationsService {
             let notification = notificationRule.notifications[j];
             notification = {
               ...notification,
-              //timeText: moment(notification.notificationTime).format("DD.MM.YYYY, HH:mm"),
+              timeText: moment(notification.notificationTime).format("DD.MM.YYYY, HH:mm"),
               type: "threshold",
               activationOperator: notificationRule.activationOperator,
               activationThreshold: notificationRule.activationThreshold,
@@ -225,6 +225,7 @@ export class NotificationsService {
       }
       this.notificationsStore.update(state => ({
         ...state,
+        unread: true,
         notifications: (typeof state.notifications != "undefined") ? [newNotification].concat(state.notifications) : [newNotification],
         notificationRules: [res.data].concat(state.notificationRules)
       }));
@@ -242,7 +243,7 @@ export class NotificationsService {
    * @param ruleB - this should be the entire rule
    * @param operator - "and", "or" or "xor"
    */
-  async connectRules(ruleA,ruleB,operator) {
+  async connectRules(ruleA,ruleB,operator, active) {
     let headers = new HttpHeaders();
     headers = headers.append('Authorization', 'Bearer '+window.localStorage.getItem('sb_accesstoken'));
     let params = {
@@ -250,7 +251,7 @@ export class NotificationsService {
       ruleA: ruleA._id.toString(),
       ruleB: ruleB._id.toString(),
       connectionOperator: operator,
-      active: true
+      active: active
     }
     this.http.post(`${environment.api_url}/notification/notificationRule/connect`, params, {headers: headers})
     .pipe(catchError(err => {
@@ -310,7 +311,7 @@ export class NotificationsService {
    * @param ruleB - this should be the entire rule
    * @param operator - "and", "or" or "xor"
    */
-  updateConnector(connectorId, ruleA, ruleB, operator) {
+  updateConnector(connectorId, ruleA, ruleB, operator, active) {
     let headers = new HttpHeaders();
     headers = headers.append('Authorization', 'Bearer '+window.localStorage.getItem('sb_accesstoken'));
     let params = {
@@ -318,7 +319,7 @@ export class NotificationsService {
       ruleA: ruleA._id.toString(),
       ruleB: ruleB._id.toString(),
       connectionOperator: operator,
-      active: true
+      active: active
     }
     this.http.put(`${environment.api_url}/notification/notificationRule/connect/`+connectorId, params, {headers: headers}).subscribe(async (res:any) => {
       res.data = {
